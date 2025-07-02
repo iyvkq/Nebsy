@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z - Professional Seller Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --sidebar-bg: rgba(15, 12, 36, 0.98);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* ====== SIDEBAR STYLES ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(110, 72, 170, 0.3);
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .seller-info {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .seller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .seller-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .seller-tier {
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+        
+        .menu-item {
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(110, 72, 170, 0.2);
+            color: var(--secondary);
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+        
+        /* ====== MAIN CONTENT STYLES ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 250px;
+            outline: none;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .notifications-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .notification-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* ====== SUPPORT SECTION STYLES ====== */
+        .support-section {
+            display: none;
+        }
+        
+        .support-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .btn-email {
+            background: linear-gradient(45deg, #4776E6, #6e48aa);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-email:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(71, 118, 230, 0.5);
+        }
+        
+        .btn-live-chat {
+            background: linear-gradient(45deg, #4ecca3, #2a9d8f);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-live-chat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+        
+        .guide-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .guide-card {
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(110, 72, 170, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .guide-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        
+        .guide-title {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .guide-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .guide-content {
+            margin: 20px 0;
+            line-height: 1.7;
+        }
+        
+        .guide-section {
+            margin-bottom: 25px;
+        }
+        
+        .guide-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .guide-list {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .guide-list li {
+            margin-bottom: 10px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .feature-card {
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .feature-card h4 {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .feature-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .compliance-badge {
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .compliance-badge i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .compliance-badge h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .compliance-badge p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            background: rgba(30, 25, 60, 0.8);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .bot-message {
+            background: rgba(110, 72, 170, 0.3);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background: rgba(71, 118, 230, 0.3);
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+        
+        .support-message {
+            background: rgba(255, 193, 7, 0.2);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .chat-input-container {
+            padding: 15px;
+            background: rgba(30, 25, 60, 0.8);
+            border-top: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 50px;
+            color: var(--light-text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .chat-send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-send-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-btn {
+            background: rgba(110, 72, 170, 0.2);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            color: var(--light-text);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            background: var(--primary);
+        }
+        
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .support-card {
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .support-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(110, 72, 170, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .support-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .support-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .support-card p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .troubleshooting-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .troubleshooting-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: #b0b0ff;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .troubleshooting-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .troubleshooting-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .error-code {
+            font-family: monospace;
+            background: rgba(110, 72, 170, 0.2);
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #7bff7b;
+        }
+        
+        .status-indicator.busy {
+            background: #ff7b7b;
+        }
+        
+        .status-indicator.away {
+            background: #ffd67b;
+        }
+        
+        .chat-title-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar:hover {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar-header, .seller-info, .menu-item span {
+                display: none;
+            }
+            
+            .sidebar:hover .sidebar-header,
+            .sidebar:hover .seller-info,
+            .sidebar:hover .menu-item span {
+                display: block;
+            }
+            
+            .sidebar:hover .seller-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .sidebar:hover + .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .notifications-dropdown {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex: 1;
+            }
+            
+            .notifications-dropdown {
+                width: 100%;
+                right: -15px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-text">B5Z</div>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">S</div>
+                <div class="seller-name">Sarah Johnson</div>
+                <div class="seller-tier">Premium Seller</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="menu-item" data-section="store">
+                <i class="fas fa-store"></i>
+                <span>Store</span>
+            </a>
+            <a class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a class="menu-item" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a>
+            <a class="menu-item" data-section="earnings">
+                <i class="fas fa-wallet"></i>
+                <span>Earnings</span>
+            </a>
+            <a class="menu-item" data-section="community">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="menu-item" data-section="coupons">
+                <i class="fas fa-tags"></i>
+                <span>Coupons</span>
+            </a>
+            <a class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="menu-item active" data-section="support">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="page-title" id="page-title">Seller Support</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search support topics..." id="search-input">
+                </div>
+                <div class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="action-btn"><i class="fas fa-check"></i> Mark all as read</button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Security Guide Updated</div>
+                        <p>New security best practices available</p>
+                        <div class="notification-time">2 hours ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Dashboard Update</div>
+                        <p>Version 4.2.1 is now available</p>
+                        <div class="notification-time">Yesterday</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Security Audit</div>
+                        <p>Your account security score: 92/100</p>
+                        <div class="notification-time">2 days ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== SUPPORT SECTION ====== -->
+        <div id="support-content" class="support-section active">
+            <div class="section-card">
+                <h2 class="section-title">AI Support Assistant</h2>
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-title-container">
+                            <i class="fas fa-robot" style="color: var(--primary);"></i>
+                            <div class="section-title">B5Z Support Bot</div>
+                        </div>
+                        <div class="agent-status">
+                            <div class="status-indicator"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            Welcome to B5Z Support, Sarah! How can I assist you today?
+                        </div>
+                        <div class="message bot-message">
+                            You can ask me about account security, profile settings, or choose from these common topics:
+                        </div>
+                        <div class="message bot-message">
+                            <div class="options-grid">
+                                <div class="option-btn">Security Settings</div>
+                                <div class="option-btn">Profile Management</div>
+                                <div class="option-btn">Password Reset</div>
+                                <div class="option-btn">Two-Factor Auth</div>
+                                <div class="option-btn">Data Export</div>
+                                <div class="option-btn">Live Support</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" placeholder="Type your question here..." id="chat-input">
+                        <button class="chat-send-btn" id="send-chat-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Security & Account Guides</h2>
+                <div class="guide-container">
+                    <div class="guide-card">
+                        <div class="guide-header">
+                            <div class="guide-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <div class="guide-title">Account Security Guide</div>
+                                <div class="guide-meta">
+                                    <span><i class="fas fa-calendar"></i> Updated: August 15, 2023</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-content">
+                            <div class="guide-section">
+                                <h3 class="guide-section-title">Profile Settings</h3>
+                                <ul class="guide-list">
+                                    <li><strong>Avatar Update:</strong> Click the circular profile avatar area (100×100px). Supported formats: JPG, PNG, GIF (max 5MB). System auto-crops/resizes to 1:1 aspect ratio.</li>
+                                    <li><strong>Personal Details:</strong> Full Name (required, 2-50 characters), Username (real-time availability checker, valid characters: a-z, 0-9, underscores, length: 3-20 characters).</li>
+                                    <li><strong>Bio Editor:</strong> Character counter (max 500 characters) with live preview updates as you type.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="guide-section">
+                                <h3 class="guide-section-title">Account Security</h3>
+                                <ul class="guide-list">
+                                    <li><strong>Password Requirements:</strong> 8+ characters, 1 uppercase, 1 lowercase, 1 number, 1 symbol (!@#$%^&*)</li>
+                                    <li><strong>Two-Factor Authentication:</strong> Enable SMS authentication or authenticator app for enhanced security</li>
+                                    <li><strong>Session Management:</strong> View active sessions, log out devices remotely</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Troubleshooting & Support</h2>
+                
+                <div class="troubleshooting-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Error Code</th>
+                                <th>Issue</th>
+                                <th>Resolution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="error-code">SEC-101</span></td>
+                                <td>Invalid password format</td>
+                                <td>Ensure password meets requirements: 8+ chars, uppercase, lowercase, number, symbol</td>
+                            </tr>
+                            <tr>
+                                <td><span class="error-code">SEC-203</span></td>
+                                <td>Session conflict</td>
+                                <td>Clear browser cache and cookies, then log in again</td>
+                            </tr>
+                            <tr>
+                                <td><span class="error-code">SEC-305</span></td>
+                                <td>Unauthorized deletion attempt</td>
+                                <td>Verify your identity and try again in 30 minutes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="support-grid">
+                    <div class="support-card">
+                        <div class="support-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email Support</h3>
+                        <p>For detailed inquiries and documentation requests</p>
+                        <a href="mailto:theb5z.ai@gmail.com" class="btn btn-email">
+                            <i class="fas fa-envelope"></i> Contact via Email
+                        </a>
+                    </div>
+                    
+                    <div class="support-card">
+                        <div class="support-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Live Chat</h3>
+                        <p>Immediate assistance during business hours</p>
+                        <button class="btn btn-live-chat" id="live-chat-btn">
+                            <i class="fas fa-comment-dots"></i> Start Live Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Handle sidebar navigation
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update active section
+                    const sectionId = this.getAttribute('data-section') + '-content';
+                    document.querySelectorAll('.support-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Update page title
+                    const title = this.querySelector('span').textContent;
+                    document.getElementById('page-title').textContent = title;
+                });
+            });
+        }
+        
+        // Handle notification dropdown
+        function setupNotifications() {
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            
+            notificationBtn.addEventListener('click', () => {
+                notificationsDropdown.classList.toggle('active');
+            });
+            
+            // Close notifications when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.notifications-dropdown') && !e.target.closest('.notification-btn')) {
+                    notificationsDropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        // Support Chat Functionality
+        function setupSupportChat() {
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const sendButton = document.getElementById('send-chat-btn');
+            const options = document.querySelectorAll('.option-btn');
+            const liveChatBtn = document.getElementById('live-chat-btn');
+            const statusIndicator = document.querySelector('.status-indicator');
+            const agentStatusText = document.querySelector('.agent-status span');
+            const chatTitle = document.querySelector('.chat-header .section-title');
+            const chatIcon = document.querySelector('.chat-header .fa-robot');
+            
+            let liveSupportActive = false;
+            let supportAgentAvailable = true;
+            
+            // Handle option button clicks
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const topic = this.textContent;
+                    
+                    if(topic === "Live Support") {
+                        connectToLiveSupport();
+                    } else {
+                        addMessage(`Tell me about ${topic}`, 'user');
+                        
+                        // Simulate bot response after delay
+                        setTimeout(() => {
+                            generateBotResponse(topic);
+                        }, 1000);
+                    }
+                });
+            });
+            
+            // Handle live chat button
+            liveChatBtn.addEventListener('click', connectToLiveSupport);
+            
+            // Handle send button
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Handle enter key in chat input
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    // Add user message
+                    addMessage(message, 'user');
+                    
+                    // Clear input
+                    chatInput.value = '';
+                    
+                    if(liveSupportActive) {
+                        // Simulate live agent response
+                        simulateAgentResponse(message);
+                    } else {
+                        // Simulate bot response after delay
+                        setTimeout(() => {
+                            generateBotResponse(message);
+                        }, 1000);
+                    }
+                }
+            }
+            
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                
+                if(sender === 'user') {
+                    messageDiv.classList.add('user-message');
+                } else if(sender === 'bot') {
+                    messageDiv.classList.add('bot-message');
+                } else if(sender === 'support') {
+                    messageDiv.classList.add('support-message');
+                }
+                
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function generateBotResponse(userMessage) {
+                let response = "I can help you with that! Here's what I know:";
+                
+                // Handle greetings
+                if (userMessage.toLowerCase().includes('hi') || 
+                    userMessage.toLowerCase().includes('hello') || 
+                    userMessage.toLowerCase().includes('hey')) {
+                    response = "Hello Sarah! How can I assist you today?";
+                }
+                // Security settings
+                else if (userMessage.toLowerCase().includes('security') || 
+                         userMessage.toLowerCase().includes('settings')) {
+                    response = "Security settings can be managed under Settings > Security. You can enable two-factor authentication, manage active sessions, and update your password there. Would you like me to guide you through enabling 2FA?";
+                }
+                // Profile management
+                else if (userMessage.toLowerCase().includes('profile') || 
+                         userMessage.toLowerCase().includes('avatar')) {
+                    response = "Profile management is under Settings > Profile. You can update your avatar, name, bio, and contact information. Your profile picture should be JPG, PNG or GIF (max 5MB).";
+                }
+                // Password reset
+                else if (userMessage.toLowerCase().includes('password') || 
+                         userMessage.toLowerCase().includes('reset')) {
+                    response = "To reset your password, go to Settings > Security > Password. You'll need to enter your current password and then set a new one. Make sure it's strong: at least 8 characters with uppercase, lowercase, number and symbol.";
+                }
+                // Two-factor authentication
+                else if (userMessage.toLowerCase().includes('two-factor') || 
+                         userMessage.toLowerCase().includes('2fa') || 
+                         userMessage.toLowerCase().includes('authentication')) {
+                    response = "Two-factor authentication adds an extra layer of security. You can enable it with SMS or an authenticator app. Go to Settings > Security > Two-Factor Authentication to set it up. I recommend using an authenticator app for better security.";
+                }
+                // Data export
+                else if (userMessage.toLowerCase().includes('data') || 
+                         userMessage.toLowerCase().includes('export')) {
+                    response = "You can export your account data from Settings > Security > Data Export. This will generate a TXT file with your profile details, security settings, and login history. The file is encrypted with your account email as password.";
+                }
+                
+                addMessage(response, 'bot');
+            }
+            
+            function connectToLiveSupport() {
+                liveSupportActive = true;
+                
+                // Update chat header
+                chatTitle.textContent = "Live Support Agent";
+                chatIcon.className = "fas fa-headset";
+                chatIcon.style.color = "#4ecca3";
+                
+                // Clear chat
+                chatMessages.innerHTML = '';
+                
+                // Add connection messages
+                addMessage("Connecting you to a live support agent...", 'bot');
+                
+                setTimeout(() => {
+                    if(supportAgentAvailable) {
+                        addMessage("Hello Sarah! I'm Alex, your dedicated support agent. How can I assist you today?", 'support');
+                        statusIndicator.classList.add('away');
+                        agentStatusText.textContent = "Typing...";
+                    } else {
+                        addMessage("All our support agents are currently assisting other sellers. Your position in queue: #3. We'll connect you shortly.", 'bot');
+                        liveSupportActive = false;
+                        
+                        // Restore chat header
+                        setTimeout(() => {
+                            chatTitle.textContent = "B5Z Support Bot";
+                            chatIcon.className = "fas fa-robot";
+                            chatIcon.style.color = "var(--primary)";
+                        }, 2000);
+                    }
+                }, 2000);
+            }
+            
+            function simulateAgentResponse(message) {
+                // Show agent is typing
+                statusIndicator.classList.remove('away');
+                statusIndicator.classList.add('busy');
+                agentStatusText.textContent = "Typing...";
+                
+                // Random response time (3-8 seconds)
+                const delay = 3000 + Math.random() * 5000;
+                
+                setTimeout(() => {
+                    statusIndicator.classList.remove('busy');
+                    agentStatusText.textContent = "Online";
+                    
+                    let response = "I understand your concern about " + message + ". ";
+                    
+                    // 30% chance agent is busy
+                    if(Math.random() > 0.7) {
+                        response = "Thanks for your patience. Our support team is currently experiencing high volume. I'll get back to you as soon as possible.";
+                        statusIndicator.classList.add('away');
+                        agentStatusText.textContent = "Away";
+                    } else {
+                        response += "Based on your account details, I recommend checking the Security Guide in our documentation section. Would you like me to email you detailed instructions?";
+                    }
+                    
+                    addMessage(response, 'support');
+                }, delay);
+            }
+        }
+        
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            setupNotifications();
+            setupSupportChat();
+            
+            // Set support as active
+            document.getElementById('page-title').textContent = 'Support';
+            
+            // Set chat input focus
+            document.getElementById('chat-input').focus();
+        });
+    </script>
+</body>
+</html>

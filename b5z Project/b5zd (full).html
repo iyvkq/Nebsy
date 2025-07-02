@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z - Professional Seller Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --sidebar-bg: rgba(15, 12, 36, 0.98);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* ====== SIDEBAR STYLES ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(110, 72, 170, 0.3);
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .seller-info {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .seller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .seller-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .seller-tier {
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+        
+        .menu-item {
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(110, 72, 170, 0.2);
+            color: var(--secondary);
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+        
+        /* ====== MAIN CONTENT STYLES ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 250px;
+            outline: none;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .notifications-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .notification-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* ====== COMMON COMPONENT STYLES ====== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(110, 72, 170, 0.4);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .stat-title {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #7bff7b;
+        }
+        
+        .stat-trend.down {
+            color: #ff7b7b;
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-btn {
+            background: rgba(110, 72, 170, 0.2);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            color: var(--light-text);
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-btn:hover, .chart-btn.active {
+            background: var(--primary);
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        .products-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .products-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: #b0b0ff;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .products-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .product-row:hover {
+            background: rgba(110, 72, 170, 0.1);
+        }
+        
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .product-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .product-category {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .status-published {
+            background: rgba(123, 255, 123, 0.15);
+            color: #7bff7b;
+        }
+        
+        .status-pending {
+            background: rgba(255, 214, 123, 0.15);
+            color: #ffd67b;
+        }
+        
+        .status-draft {
+            background: rgba(179, 179, 179, 0.15);
+            color: #b3b3b3;
+        }
+        
+        .status-waitlist {
+            background: rgba(123, 192, 255, 0.15);
+            color: #7bc0ff;
+        }
+        
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 10px;
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.3);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .upload-area {
+            border: 2px dashed rgba(110, 72, 170, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(25, 20, 45, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .community-card {
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .community-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(110, 72, 170, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .community-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .community-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .community-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .community-code {
+            display: inline-block;
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .community-members {
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .member-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(110, 72, 170, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-left: -10px;
+            border: 2px solid var(--dark-bg);
+        }
+        
+        .member-avatar:first-child {
+            margin-left: 0;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            background: rgba(30, 25, 60, 0.8);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .bot-message {
+            background: rgba(110, 72, 170, 0.3);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background: rgba(71, 118, 230, 0.3);
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+        
+        .chat-input-container {
+            padding: 15px;
+            background: rgba(30, 25, 60, 0.8);
+            border-top: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .chat-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 50px;
+            color: var(--light-text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-btn {
+            background: rgba(110, 72, 170, 0.2);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            color: var(--light-text);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            background: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            border: 1px solid rgba(110, 72, 170, 0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--light-text);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .confirmation-modal .modal-content {
+            max-width: 450px;
+        }
+        
+        .confirmation-text {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(45deg, #ff5252, #ff7675);
+            color: white;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #8e0e00;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .order-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+        
+        .status-processing {
+            background: rgba(255, 214, 123, 0.15);
+            color: #ffd67b;
+        }
+        
+        .status-shipped {
+            background: rgba(123, 192, 255, 0.15);
+            color: #7bc0ff;
+        }
+        
+        .status-delivered {
+            background: rgba(123, 255, 123, 0.15);
+            color: #7bff7b;
+        }
+        
+        /* New Styles for Enhanced Features */
+        .channel-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid rgba(110, 72, 170, 0.3);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin: 20px 0;
+        }
+        
+        .channel-stat-item {
+            text-align: center;
+        }
+        
+        .channel-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .channel-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(110, 72, 170, 0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .level-toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .level-toggle-label {
+            font-size: 0.9rem;
+        }
+        
+        .product-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .product-form-section {
+            background: rgba(25, 20, 45, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .product-form-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .featured-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .featured-product-card {
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .featured-product-card:hover, .featured-product-card.selected {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .featured-product-card.selected {
+            box-shadow: 0 0 10px rgba(110, 72, 170, 0.5);
+        }
+        
+        .featured-product-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .featured-product-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .featured-product-price {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .channel-links {
+            margin-top: 20px;
+        }
+        
+        .link-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .link-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(110, 72, 170, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .link-input {
+            flex: 1;
+        }
+        
+        .add-link-btn {
+            background: rgba(110, 72, 170, 0.2);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            color: var(--light-text);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .add-link-btn:hover {
+            background: var(--primary);
+        }
+        
+        .community-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .preview-banner {
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preview-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid var(--dark-bg);
+        }
+        
+        .preview-channel-name {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .preview-level-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .preview-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .preview-stat {
+            text-align: center;
+        }
+        
+        .preview-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .preview-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .preview-community {
+            background: rgba(30, 25, 60, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .preview-community-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .preview-community-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .preview-links {
+            margin-top: 20px;
+        }
+        
+        .preview-link {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .preview-link i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-form-grid,
+            .community-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar:hover {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar-header, .seller-info, .menu-item span {
+                display: none;
+            }
+            
+            .sidebar:hover .sidebar-header,
+            .sidebar:hover .seller-info,
+            .sidebar:hover .menu-item span {
+                display: block;
+            }
+            
+            .sidebar:hover .seller-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .sidebar:hover + .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .notifications-dropdown {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex: 1;
+            }
+            
+            .notifications-dropdown {
+                width: 100%;
+                right: -15px;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-text">B5Z</div>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">S</div>
+                <div class="seller-name">Sarah Johnson</div>
+                <div class="seller-tier">Premium Seller</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="menu-item" data-section="store">
+                <i class="fas fa-store"></i>
+                <span>Store</span>
+            </a>
+            <a class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a class="menu-item" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a>
+            <a class="menu-item" data-section="earnings">
+                <i class="fas fa-wallet"></i>
+                <span>Earnings</span>
+            </a>
+            <a class="menu-item" data-section="community">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="menu-item" data-section="coupons">
+                <i class="fas fa-tags"></i>
+                <span>Coupons</span>
+            </a>
+            <a class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="menu-item" data-section="support">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="page-title" id="page-title">Seller Dashboard</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search dashboard..." id="search-input">
+                </div>
+                <div class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="action-btn"><i class="fas fa-check"></i> Mark all as read</button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">New Sale Completed</div>
+                        <p>Your product "Premium UI Kit" was purchased</p>
+                        <div class="notification-time">10 minutes ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Community Invitation</div>
+                        <p>You've been invited to join "Design Masters"</p>
+                        <div class="notification-time">2 hours ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Payment Received</div>
+                        <p>$249.50 has been deposited to your account</p>
+                        <div class="notification-time">Yesterday</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== DASHBOARD SECTION ====== -->
+        <div id="dashboard-content" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Total Revenue
+                    </div>
+                    <div class="stat-value">$8,420</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        12.5% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-1">
+                    <div class="stat-title">
+                        <i class="fas fa-chart-line"></i>
+                        Sales
+                    </div>
+                    <div class="stat-value">142</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        8.3% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-2">
+                    <div class="stat-title">
+                        <i class="fas fa-box"></i>
+                        Products
+                    </div>
+                    <div class="stat-value">24</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        3 new this month
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-3">
+                    <div class="stat-title">
+                        <i class="fas fa-star"></i>
+                        Rating
+                    </div>
+                    <div class="stat-value">4.8/5</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        0.2 improvement
+                    </div>
+                </div>
+            </div>
+            
+            <div class="charts-row">
+                <div class="chart-container fade-in">
+                    <div class="chart-header">
+                        <div class="chart-title">Sales Analytics</div>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">Week</button>
+                            <button class="chart-btn">Month</button>
+                            <button class="chart-btn">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container fade-in delay-1">
+                    <div class="chart-header">
+                        <div class="chart-title">Revenue Sources</div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="products-section fade-in delay-2">
+                <div class="section-header">
+                    <div class="section-title">Recent Products</div>
+                </div>
+                
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Sales</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-img">
+                                        <i class="fas fa-paint-brush"></i>
+                                    </div>
+                                    <div>
+                                        <div class="product-name">Premium UI Kit</div>
+                                        <div class="product-category">Design Assets</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>$49.99</td>
+                            <td>84</td>
+                            <td>
+                                <span class="status-badge status-published">Published</span>
+                            </td>
+                        </tr>
+                        
+                        <tr class="product-row">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-img">
+                                        <i class="fas fa-code"></i>
+                                    </div>
+                                    <div>
+                                        <div class="product-name">E-commerce Template</div>
+                                        <div class="product-category">Web Templates</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>$29.99</td>
+                            <td>42</td>
+                            <td>
+                                <span class="status-badge status-published">Published</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ====== STORE SECTION ====== -->
+        <div id="store-content" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">Channel Customization</h2>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Channel Banner</label>
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p>Drag & drop your banner image here</p>
+                                <p>or <span style="color: var(--primary);">browse files</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Channel Logo</label>
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p>Drag & drop your logo here</p>
+                                <p>or <span style="color: var(--primary);">browse files</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Channel Name</label>
+                            <input type="text" class="form-input" value="Sarah's Design Studio">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Channel Description</label>
+                            <textarea class="form-textarea">Premium design resources, UI kits, and templates for creative professionals. All assets are crafted with attention to detail and optimized for modern design workflows.</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Brand Color</label>
+                            <input type="color" class="form-input" value="#6e48aa" style="height: 50px; width: 100px;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Level Badge</label>
+                            <div class="level-toggle">
+                                <span class="level-toggle-label">Show on channel:</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="level-badge">Elite Designer</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Channel Stats</label>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Subscribers</label>
+                                        <input type="number" class="form-input" value="2450">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Total Views</label>
+                                        <input type="number" class="form-input" value="12840">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Products</label>
+                                        <input type="number" class="form-input" value="24">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Rating</label>
+                                        <input type="text" class="form-input" value="4.8/5">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Featured Products</label>
+                            <div class="featured-products-grid">
+                                <div class="featured-product-card selected">
+                                    <div class="featured-product-img">
+                                        <i class="fas fa-paint-brush"></i>
+                                    </div>
+                                    <div class="featured-product-name">Premium UI Kit</div>
+                                    <div class="featured-product-price">$49.99</div>
+                                </div>
+                                <div class="featured-product-card selected">
+                                    <div class="featured-product-img">
+                                        <i class="fas fa-code"></i>
+                                    </div>
+                                    <div class="featured-product-name">E-commerce Template</div>
+                                    <div class="featured-product-price">$29.99</div>
+                                </div>
+                                <div class="featured-product-card">
+                                    <div class="featured-product-img">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                    <div class="featured-product-name">Lightroom Presets</div>
+                                    <div class="featured-product-price">$19.99</div>
+                                </div>
+                                <div class="featured-product-card">
+                                    <div class="featured-product-img">
+                                        <i class="fas fa-music"></i>
+                                    </div>
+                                    <div class="featured-product-name">Music Pack</div>
+                                    <div class="featured-product-price">$24.99</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Community</label>
+                            <input type="text" class="form-input" placeholder="Community Name" value="Design Masters">
+                            <textarea class="form-textarea" placeholder="Community Description" style="min-height: 80px; margin-top: 10px;">Join our community of professional designers and digital creators</textarea>
+                        </div>
+                        
+                        <div class="form-group channel-links">
+                            <label class="form-label">Channel Links</label>
+                            <div class="link-item">
+                                <div class="link-icon">
+                                    <i class="fab fa-youtube"></i>
+                                </div>
+                                <input type="text" class="form-input link-input" placeholder="YouTube URL" value="https://youtube.com/sarahdesigns">
+                            </div>
+                            <div class="link-item">
+                                <div class="link-icon">
+                                    <i class="fab fa-instagram"></i>
+                                </div>
+                                <input type="text" class="form-input link-input" placeholder="Instagram URL" value="https://instagram.com/sarahdesigns">
+                            </div>
+                            <div class="link-item">
+                                <div class="link-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <input type="text" class="form-input link-input" placeholder="Website URL" value="https://sarahdesigns.com">
+                            </div>
+                            <button class="add-link-btn">
+                                <i class="fas fa-plus"></i> Add Link
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Channel Settings
+                </button>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Channel Preview</h2>
+                <div style="border: 2px dashed var(--primary); border-radius: 15px; padding: 25px; background: rgba(30, 25, 60, 0.5);">
+                    <div class="preview-banner">
+                        <div class="preview-logo"></div>
+                        <div class="preview-channel-name">Sarah's Design Studio</div>
+                        <div class="preview-level-badge level-badge">Elite Designer</div>
+                    </div>
+                    
+                    <div class="preview-stats">
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">2.4K</div>
+                            <div class="preview-stat-label">Subscribers</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">12.8K</div>
+                            <div class="preview-stat-label">Views</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">24</div>
+                            <div class="preview-stat-label">Products</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">4.8</div>
+                            <div class="preview-stat-label">Rating</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p>Premium design resources, UI kits, and templates for creative professionals. All assets are crafted with attention to detail and optimized for modern design workflows.</p>
+                    </div>
+                    
+                    <div class="preview-community">
+                        <div class="preview-community-name">Design Masters</div>
+                        <div class="preview-community-desc">Join our community of professional designers and digital creators</div>
+                    </div>
+                    
+                    <div class="preview-links">
+                        <div class="preview-link">
+                            <i class="fab fa-youtube"></i>
+                            <span>https://youtube.com/sarahdesigns</span>
+                        </div>
+                        <div class="preview-link">
+                            <i class="fab fa-instagram"></i>
+                            <span>https://instagram.com/sarahdesigns</span>
+                        </div>
+                        <div class="preview-link">
+                            <i class="fas fa-globe"></i>
+                            <span>https://sarahdesigns.com</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 15px;">Featured Products</h3>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="width: 100px; height: 100px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-paint-brush" style="font-size: 2rem;"></i>
+                            </div>
+                            <div style="width: 100px; height: 100px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-code" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== PRODUCTS SECTION ====== -->
+        <div id="products-content" class="content-section">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">Product Management</div>
+                    <button class="btn btn-primary" id="add-product-btn">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </button>
+                </div>
+                
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Sales</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <tr class="product-row">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-img">
+                                        <i class="fas fa-paint-brush"></i>
+                                    </div>
+                                    <div>
+                                        <div class="product-name">Premium UI Kit</div>
+                                        <div class="product-category">Design Assets</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>$49.99</td>
+                            <td>84</td>
+                            <td>4.9</td>
+                            <td>
+                                <span class="status-badge status-published">Published</span>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="openEditProductModal()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" onclick="confirmDelete()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr class="product-row">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-img">
+                                        <i class="fas fa-code"></i>
+                                    </div>
+                                    <div>
+                                        <div class="product-name">E-commerce Template</div>
+                                        <div class="product-category">Web Templates</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>$29.99</td>
+                            <td>42</td>
+                            <td>4.7</td>
+                            <td>
+                                <span class="status-badge status-published">Published</span>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="openEditProductModal()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" onclick="confirmDelete()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ====== ORDERS SECTION ====== -->
+        <div id="orders-content" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">Recent Orders</h2>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row">
+                            <td>#ORD-2023-068</td>
+                            <td>John Smith</td>
+                            <td>Premium UI Kit</td>
+                            <td>$49.99</td>
+                            <td>Jun 23, 2023</td>
+                            <td>
+                                <span class="order-status status-processing">Processing</span>
+                            </td>
+                            <td>
+                                <button class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="product-row">
+                            <td>#ORD-2023-067</td>
+                            <td>Emma Davis</td>
+                            <td>Lightroom Presets</td>
+                            <td>$19.99</td>
+                            <td>Jun 22, 2023</td>
+                            <td>
+                                <span class="order-status status-shipped">Shipped</span>
+                            </td>
+                            <td>
+                                <button class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="product-row">
+                            <td>#ORD-2023-066</td>
+                            <td>Michael Brown</td>
+                            <td>E-commerce Template</td>
+                            <td>$29.99</td>
+                            <td>Jun 21, 2023</td>
+                            <td>
+                                <span class="order-status status-delivered">Delivered</span>
+                            </td>
+                            <td>
+                                <button class="action-btn">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Order Statistics</h2>
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Orders by Status</div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="ordersChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Recent Order Activity</div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="orderActivityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== EARNINGS SECTION ====== -->
+        <div id="earnings-content" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">Earnings Overview</h2>
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Earnings History</div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="earningsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">Withdraw Funds</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Available Balance</label>
+                            <div class="stat-value">$3,420.50</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Withdrawal Amount</label>
+                            <input type="number" class="form-input" placeholder="Enter amount">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Payment Method</label>
+                            <select class="form-select">
+                                <option>PayPal</option>
+                                <option>Bank Transfer</option>
+                                <option>Stripe</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-money-bill-wave"></i> Withdraw Funds
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Recent Transactions</h2>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row">
+                            <td>Jun 20, 2023</td>
+                            <td>Premium UI Kit Sale</td>
+                            <td>$49.99</td>
+                            <td>
+                                <span class="status-badge status-published">Completed</span>
+                            </td>
+                        </tr>
+                        <tr class="product-row">
+                            <td>Jun 18, 2023</td>
+                            <td>Lightroom Presets Sale</td>
+                            <td>$19.99</td>
+                            <td>
+                                <span class="status-badge status-published">Completed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ====== COMMUNITY SECTION ====== -->
+        <div id="community-content" class="content-section">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">Your Communities</h2>
+                    <button class="btn btn-primary" id="create-community-btn">
+                        <i class="fas fa-plus"></i> Create Community
+                    </button>
+                </div>
+                
+                <div class="community-grid">
+                    <div class="community-card">
+                        <div class="community-header">
+                            <div class="community-icon">
+                                <i class="fas fa-paint-brush"></i>
+                            </div>
+                            <div>
+                                <div class="community-name">Design Masters</div>
+                                <div class="community-code">ACCESS CODE: DSGN123</div>
+                            </div>
+                        </div>
+                        <p>Community for UI/UX designers and digital artists</p>
+                        <div class="community-members">
+                            <div class="member-avatar">A</div>
+                            <div class="member-avatar">B</div>
+                            <div class="member-avatar">C</div>
+                            <div class="member-avatar">+12</div>
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-comments"></i> Open Chat
+                        </button>
+                    </div>
+                    
+                    <div class="community-card">
+                        <div class="community-header">
+                            <div class="community-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div>
+                                <div class="community-name">Web Developers</div>
+                                <div class="community-code">ACCESS CODE: DEV456</div>
+                            </div>
+                        </div>
+                        <p>Community for web developers and programmers</p>
+                        <div class="community-members">
+                            <div class="member-avatar">X</div>
+                            <div class="member-avatar">Y</div>
+                            <div class="member-avatar">Z</div>
+                            <div class="member-avatar">+18</div>
+                        </div>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-comments"></i> Open Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Join a Community</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Access Code</label>
+                            <input type="text" class="form-input" placeholder="Enter community access code">
+                        </div>
+                    </div>
+                    <div class="form-col" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-sign-in-alt"></i> Join Community
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== COUPONS SECTION ====== -->
+        <div id="coupons-content" class="content-section">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">Coupon Management</h2>
+                    <button class="btn btn-primary" id="create-coupon-btn">
+                        <i class="fas fa-plus"></i> Create Coupon
+                    </button>
+                </div>
+                
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Discount</th>
+                            <th>Products</th>
+                            <th>Expiration</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row">
+                            <td>SUMMER20</td>
+                            <td>20% Off</td>
+                            <td>All Products</td>
+                            <td>Jul 31, 2023</td>
+                            <td>
+                                <span class="status-badge status-published">Active</span>
+                            </td>
+                            <td>
+                                <button class="action-btn">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="product-row">
+                            <td>NEWUSER15</td>
+                            <td>15% Off</td>
+                            <td>New Users</td>
+                            <td>Ongoing</td>
+                            <td>
+                                <span class="status-badge status-published">Active</span>
+                            </td>
+                            <td>
+                                <button class="action-btn">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ====== SETTINGS SECTION ====== -->
+        <div id="settings-content" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">Profile Settings</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Profile Picture</label>
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p>Drag & drop your image here</p>
+                                <p>or <span style="color: var(--primary);">browse files</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" value="Sarah Johnson">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="sarah@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-textarea">Professional UI/UX designer with 5+ years of experience creating beautiful digital products.</textarea>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Account Settings</h2>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" placeholder="Confirm new password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Two-Factor Authentication</label>
+                    <select class="form-select">
+                        <option>Disabled</option>
+                        <option>Enabled (SMS)</option>
+                        <option>Enabled (Authenticator App)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-shield-alt"></i> Update Security Settings
+                </button>
+            </div>
+        </div>
+        
+        <!-- ====== SUPPORT SECTION ====== -->
+        <div id="support-content" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">AI Support Assistant</h2>
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="section-title">B5Z Support Bot</div>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            Hi there! I'm your B5Z Support Assistant. How can I help you today? Here are some common topics:
+                        </div>
+                        <div class="message bot-message">
+                            <div class="options-grid">
+                                <div class="option-btn">Product Management</div>
+                                <div class="option-btn">Earnings & Payments</div>
+                                <div class="option-btn">Community Features</div>
+                                <div class="option-btn">Coupon Setup</div>
+                                <div class="option-btn">Account Settings</div>
+                                <div class="option-btn">Technical Issues</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" placeholder="Type your question here..." id="chat-input">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Help Resources</h2>
+                <div class="community-grid">
+                    <div class="community-card">
+                        <div class="community-header">
+                            <i class="fas fa-book" style="font-size: 2rem; color: var(--primary);"></i>
+                            <div>
+                                <div class="community-name">Knowledge Base</div>
+                            </div>
+                        </div>
+                        <p>Browse our extensive documentation and tutorials</p>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-book-open"></i> Read Articles
+                        </button>
+                    </div>
+                    
+                    <div class="community-card">
+                        <div class="community-header">
+                            <i class="fas fa-video" style="font-size: 2rem; color: var(--primary);"></i>
+                            <div>
+                                <div class="community-name">Video Tutorials</div>
+                            </div>
+                        </div>
+                        <p>Watch step-by-step guides for all platform features</p>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-play-circle"></i> Watch Videos
+                        </button>
+                    </div>
+                    
+                    <div class="community-card">
+                        <div class="community-header">
+                            <i class="fas fa-envelope" style="font-size: 2rem; color: var(--primary);"></i>
+                            <div>
+                                <div class="community-name">Contact Support</div>
+                            </div>
+                        </div>
+                        <p>Reach out to our support team for direct assistance</p>
+                        <button class="btn" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeProductModal()">&times;</button>
+            <h2 class="modal-title" id="product-modal-title">Add New Product</h2>
+            
+            <div class="product-form-grid">
+                <div>
+                    <div class="product-form-section">
+                        <h3 class="product-form-title">Product Information</h3>
+                        <div class="form-group">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-input" placeholder="Enter product name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" placeholder="Detailed description of your product"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-select">
+                                <option>Design Assets</option>
+                                <option>Web Templates</option>
+                                <option>Photography</option>
+                                <option>Audio</option>
+                                <option>Video</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="product-form-section">
+                        <h3 class="product-form-title">Pricing</h3>
+                        <div class="form-group">
+                            <label class="form-label">Price ($)</label>
+                            <input type="number" class="form-input" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sale Price ($)</label>
+                            <input type="number" class="form-input" placeholder="Optional">
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="product-form-section">
+                        <h3 class="product-form-title">Media</h3>
+                        <div class="form-group">
+                            <label class="form-label">Thumbnail Image</label>
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p>Drag & drop your thumbnail here</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gallery Images</label>
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p>Drag & drop multiple images here</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-form-section">
+                        <h3 class="product-form-title">Publishing</h3>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select">
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Scheduled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tags</label>
+                            <input type="text" class="form-input" placeholder="Add tags separated by commas">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">License Type</label>
+                            <select class="form-select">
+                                <option>Regular License</option>
+                                <option>Extended License</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal confirmation-modal" id="confirmation-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeConfirmationModal()">&times;</button>
+            <h2 class="modal-title">Confirm Action</h2>
+            <div class="confirmation-text">Are you sure you want to delete this product? This action cannot be undone.</div>
+            <div class="confirmation-buttons">
+                <button class="btn btn-cancel" onclick="closeConfirmationModal()">Cancel</button>
+                <button class="btn btn-confirm" onclick="deleteProduct()">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Charts
+        function initCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [45, 78, 65, 92, 81, 76, 95],
+                        borderColor: '#6e48aa',
+                        backgroundColor: 'rgba(110, 72, 170, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#9d50bb',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    }
+                }
+            });
+            
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['UI Kits', 'Templates', 'Graphics', 'Fonts', 'Add-ons'],
+                    datasets: [{
+                        data: [35, 25, 20, 12, 8],
+                        backgroundColor: ['#6e48aa', '#9d50bb', '#4776E6', '#4ecca3', '#f9a826'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.8)', padding: 20 }
+                        }
+                    }
+                }
+            });
+            
+            // Earnings Chart
+            const earningsCtx = document.getElementById('earningsChart').getContext('2d');
+            new Chart(earningsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Earnings',
+                        data: [1200, 1900, 1500, 2100, 2500, 3420],
+                        backgroundColor: '#6e48aa',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Handle sidebar navigation
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update active section
+                    const sectionId = this.getAttribute('data-section') + '-content';
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Update page title
+                    const title = this.querySelector('span').textContent;
+                    document.getElementById('page-title').textContent = title;
+                });
+            });
+        }
+        
+        // Handle notification dropdown
+        function setupNotifications() {
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            
+            notificationBtn.addEventListener('click', () => {
+                notificationsDropdown.classList.toggle('active');
+            });
+            
+            // Close notifications when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.notifications-dropdown') && !e.target.closest('.notification-btn')) {
+                    notificationsDropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        // Product Management
+        function openAddProductModal() {
+            document.getElementById('product-modal-title').textContent = 'Add New Product';
+            document.getElementById('product-modal').classList.add('active');
+        }
+        
+        function openEditProductModal() {
+            document.getElementById('product-modal-title').textContent = 'Edit Product';
+            document.getElementById('product-modal').classList.add('active');
+        }
+        
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('active');
+        }
+        
+        function confirmDelete() {
+            document.getElementById('confirmation-modal').classList.add('active');
+        }
+        
+        function closeConfirmationModal() {
+            document.getElementById('confirmation-modal').classList.remove('active');
+        }
+        
+        function deleteProduct() {
+            alert('Product deleted successfully');
+            closeConfirmationModal();
+        }
+        
+        // Community Creation
+        function createCommunity() {
+            alert('Community created successfully');
+        }
+        
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            setupNavigation();
+            setupNotifications();
+            
+            // Setup product button
+            document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
+            
+            // Setup community button
+            document.getElementById('create-community-btn').addEventListener('click', createCommunity);
+            
+            // Setup featured product selection
+            document.querySelectorAll('.featured-product-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

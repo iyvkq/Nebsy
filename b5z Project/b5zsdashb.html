@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z - Professional Seller Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --sidebar-bg: rgba(15, 12, 36, 0.98);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* ====== SIDEBAR STYLES ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(110, 72, 170, 0.3);
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .seller-info {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .seller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .seller-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .seller-tier {
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+        
+        .menu-item {
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(110, 72, 170, 0.2);
+            color: var(--secondary);
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+        
+        /* ====== MAIN CONTENT STYLES ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 250px;
+            outline: none;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .notifications-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .notification-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* ====== DASHBOARD CONTENT ====== */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .empty-message {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .empty-text {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar:hover {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar-header, .seller-info, .menu-item span {
+                display: none;
+            }
+            
+            .sidebar:hover .sidebar-header,
+            .sidebar:hover .seller-info,
+            .sidebar:hover .menu-item span {
+                display: block;
+            }
+            
+            .sidebar:hover .seller-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .sidebar:hover + .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .notifications-dropdown {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex: 1;
+            }
+            
+            .notifications-dropdown {
+                width: 100%;
+                right: -15px;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-text">B5Z</div>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">S</div>
+                <div class="seller-name">Sarah Johnson</div>
+                <div class="seller-tier">Premium Seller</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a class="menu-item active" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="menu-item" data-section="store">
+                <i class="fas fa-store"></i>
+                <span>Store</span>
+            </a>
+            <a class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a class="menu-item" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a>
+            <a class="menu-item" data-section="earnings">
+                <i class="fas fa-wallet"></i>
+                <span>Earnings</span>
+            </a>
+            <a class="menu-item" data-section="community">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="menu-item" data-section="coupons">
+                <i class="fas fa-tags"></i>
+                <span>Coupons</span>
+            </a>
+            <a class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="menu-item" data-section="support">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="page-title" id="page-title">Seller Dashboard</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search dashboard..." id="search-input">
+                </div>
+                <div class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">0</span>
+                </div>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="action-btn"><i class="fas fa-check"></i> Mark all as read</button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">No New Notifications</div>
+                        <p>You're all caught up!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== DASHBOARD SECTION ====== -->
+        <div id="dashboard-content" class="content-section active">
+            <div class="empty-message">
+                <div class="empty-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <p class="empty-text">Dashboard content will appear here</p>
+            </div>
+        </div>
+        
+        <!-- ====== STORE SECTION ====== -->
+        <div id="store-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== PRODUCTS SECTION ====== -->
+        <div id="products-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== ORDERS SECTION ====== -->
+        <div id="orders-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== EARNINGS SECTION ====== -->
+        <div id="earnings-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== COMMUNITY SECTION ====== -->
+        <div id="community-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== COUPONS SECTION ====== -->
+        <div id="coupons-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== SETTINGS SECTION ====== -->
+        <div id="settings-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+        
+        <!-- ====== SUPPORT SECTION ====== -->
+        <div id="support-content" class="content-section">
+            <!-- Empty section -->
+        </div>
+    </div>
+    
+    <script>
+        // Handle sidebar navigation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active menu item
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Update active section
+                const sectionId = this.getAttribute('data-section') + '-content';
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Update page title
+                const title = this.querySelector('span').textContent;
+                document.getElementById('page-title').textContent = title;
+            });
+        });
+        
+        // Handle notification dropdown
+        const notificationBtn = document.getElementById('notification-btn');
+        const notificationsDropdown = document.getElementById('notifications-dropdown');
+        
+        notificationBtn.addEventListener('click', () => {
+            notificationsDropdown.classList.toggle('active');
+        });
+        
+        // Close notifications when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.notifications-dropdown') && !e.target.closest('.notification-btn')) {
+                notificationsDropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

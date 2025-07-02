@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z - Professional Earnings Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --sidebar-bg: rgba(15, 12, 36, 0.98);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --sidebar-width: 280px;
+            --success: #4ecca3;
+            --error: #ff7675;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            cursor: default;
+        }
+        
+        /* ====== SIDEBAR STYLES ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(110, 72, 170, 0.3);
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .seller-info {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .seller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .seller-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .seller-tier {
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+        
+        .menu-item {
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(110, 72, 170, 0.2);
+            color: var(--secondary);
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+        
+        /* ====== MAIN CONTENT STYLES ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 250px;
+            outline: none;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .notifications-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .notification-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* ====== COMMON COMPONENT STYLES ====== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(110, 72, 170, 0.4);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .stat-title {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #7bff7b;
+        }
+        
+        .stat-trend.down {
+            color: #ff7b7b;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .products-table th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: #b0b0ff;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .products-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .product-row:hover {
+            background: rgba(110, 72, 170, 0.1);
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .status-published {
+            background: rgba(123, 255, 123, 0.15);
+            color: #7bff7b;
+        }
+        
+        .status-pending {
+            background: rgba(255, 214, 123, 0.15);
+            color: #ffd67b;
+        }
+        
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 10px;
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.3);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .withdrawal-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .withdrawal-option {
+            flex: 1;
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .withdrawal-option.selected {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.2);
+            box-shadow: 0 0 10px rgba(110, 72, 170, 0.5);
+        }
+        
+        .withdrawal-option i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .withdrawal-option .option-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .withdrawal-option .option-fee {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .empty-state p {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .transaction-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: var(--card-bg);
+            border-left: 4px solid var(--success);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+        }
+        
+        .transaction-alert.error {
+            border-left-color: var(--error);
+        }
+        
+        .transaction-alert.show {
+            transform: translateX(0);
+        }
+        
+        .alert-icon {
+            font-size: 1.8rem;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .alert-message {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .close-alert {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        
+        .close-alert:hover {
+            opacity: 1;
+        }
+        
+        .transaction-feedback {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .transaction-success {
+            background: rgba(78, 204, 163, 0.15);
+            border-left: 3px solid var(--success);
+            color: var(--success);
+        }
+        
+        .transaction-error {
+            background: rgba(255, 118, 117, 0.15);
+            border-left: 3px solid var(--error);
+            color: var(--error);
+        }
+        
+        .balance-amount {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .balance-amount::after {
+            content: 'Available';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .security-note {
+            padding: 10px 15px;
+            background: rgba(71, 118, 230, 0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .min-withdrawal {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 214, 123, 0.15);
+            color: #ffd67b;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .withdrawal-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar:hover {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar-header, .seller-info, .menu-item span {
+                display: none;
+            }
+            
+            .sidebar:hover .sidebar-header,
+            .sidebar:hover .seller-info,
+            .sidebar:hover .menu-item span {
+                display: block;
+            }
+            
+            .sidebar:hover .seller-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .sidebar:hover + .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .notifications-dropdown {
+                width: 300px;
+            }
+            
+            .withdrawal-options {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex: 1;
+            }
+            
+            .notifications-dropdown {
+                width: 100%;
+                right: -15px;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Anti-Copy Overlay -->
+    <div id="copy-protection" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none;"></div>
+    
+    <!-- Transaction Alert -->
+    <div class="transaction-alert" id="transaction-alert">
+        <i class="fas fa-check-circle alert-icon"></i>
+        <div class="alert-content">
+            <div class="alert-title">Transaction Successful</div>
+            <div class="alert-message">Your withdrawal request has been processed</div>
+        </div>
+        <button class="close-alert" id="close-alert">&times;</button>
+    </div>
+    
+    <!-- Dashboard Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-text">B5Z</div>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">S</div>
+                <div class="seller-name">Sarah Johnson</div>
+                <div class="seller-tier">Premium Seller</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="menu-item" data-section="store">
+                <i class="fas fa-store"></i>
+                <span>Store</span>
+            </a>
+            <a class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a class="menu-item" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a>
+            <a class="menu-item active" data-section="earnings">
+                <i class="fas fa-wallet"></i>
+                <span>Earnings</span>
+            </a>
+            <a class="menu-item" data-section="community">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="menu-item" data-section="coupons">
+                <i class="fas fa-tags"></i>
+                <span>Coupons</span>
+            </a>
+            <a class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="menu-item" data-section="support">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="page-title" id="page-title">Earnings Dashboard</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search earnings..." id="search-input">
+                </div>
+                <div class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="action-btn"><i class="fas fa-check"></i> Mark all as read</button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Security Update</div>
+                        <p>Copy protection has been enabled on your dashboard</p>
+                        <div class="notification-time">Just now</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">New Features</div>
+                        <p>Enhanced transaction verification added</p>
+                        <div class="notification-time">2 hours ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Withdrawal Policy</div>
+                        <p>Minimum withdrawal amount is now $50</p>
+                        <div class="notification-time">Today</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== EARNINGS SECTION ====== -->
+        <div id="earnings-content" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-title">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Total Earnings
+                    </div>
+                    <div class="stat-value">$0.00</div>
+                    <div class="stat-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        0.0% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-1">
+                    <div class="stat-title">
+                        <i class="fas fa-wallet"></i>
+                        Available Balance
+                    </div>
+                    <div class="stat-value">$0.00</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-minus"></i>
+                        No change
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-2">
+                    <div class="stat-title">
+                        <i class="fas fa-shopping-cart"></i>
+                        Total Sales
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        0.0% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in delay-3">
+                    <div class="stat-title">
+                        <i class="fas fa-percentage"></i>
+                        Conversion Rate
+                    </div>
+                    <div class="stat-value">0.0%</div>
+                    <div class="stat-trend">
+                        <i class="fas fa-minus"></i>
+                        No change
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Withdraw Funds</h2>
+                <div class="security-note">
+                    <i class="fas fa-shield-alt"></i> All transactions are securely processed and encrypted
+                </div>
+                <div class="withdrawal-info">
+                    <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                    <span>Minimum withdrawal amount: <span class="min-withdrawal">$50.00</span></span>
+                </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Available Balance</label>
+                            <div class="balance-amount">
+                                <div class="stat-value" id="available-balance" style="font-size: 2.2rem; color: var(--light-text);">$0.00</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Withdrawal Amount</label>
+                            <input type="number" class="form-input" id="withdraw-amount" placeholder="Enter amount" value="0" min="0" step="0.01">
+                            <div style="margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn" onclick="setWithdrawAmount(50)">$50</button>
+                                <button class="btn" onclick="setWithdrawAmount(100)">$100</button>
+                                <button class="btn" onclick="setWithdrawAmount(250)">$250</button>
+                                <button class="btn" onclick="setWithdrawAmount(500)">$500</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Payment Method</label>
+                            <div class="withdrawal-options">
+                                <div class="withdrawal-option selected" data-method="paypal">
+                                    <i class="fab fa-paypal"></i>
+                                    <div class="option-name">PayPal</div>
+                                    <div class="option-fee">Fee: 1.5%</div>
+                                </div>
+                                <div class="withdrawal-option" data-method="bank">
+                                    <i class="fas fa-university"></i>
+                                    <div class="option-name">Bank Transfer</div>
+                                    <div class="option-fee">Fee: $2.00</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Account Details</label>
+                            <input type="text" class="form-input" id="account-details" placeholder="Enter account email or number">
+                        </div>
+                        
+                        <div id="transaction-feedback" class="transaction-feedback" style="display: none;"></div>
+                        
+                        <button class="btn btn-primary" id="withdraw-btn" style="width: 100%;">
+                            <i class="fas fa-money-bill-wave"></i> Withdraw Funds
+                        </button>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Transaction Summary</label>
+                            <div style="background: rgba(25, 20, 45, 0.5); border-radius: 15px; padding: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <span>Withdrawal Amount:</span>
+                                    <span id="summary-amount">$0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <span>Processing Fee:</span>
+                                    <span id="summary-fee">$0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 600;">
+                                    <span>You Will Receive:</span>
+                                    <span id="summary-receive">$0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <span>Estimated Arrival:</span>
+                                    <span>-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Payment Method:</span>
+                                    <span id="summary-method">PayPal</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Withdrawal History</label>
+                            <div style="background: rgba(25, 20, 45, 0.5); border-radius: 15px; padding: 15px; max-height: 300px; overflow-y: auto; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <div class="empty-state" style="padding: 0;">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <h3>No Withdrawals Yet</h3>
+                                    <p>Your withdrawal history will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Recent Transactions</h2>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px;">
+                                <div class="empty-state" style="padding: 0;">
+                                    <i class="fas fa-file-invoice"></i>
+                                    <h3>No Transactions Yet</h3>
+                                    <p>Your sales transactions will appear here</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Other sections (empty) -->
+        <div id="dashboard-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-chart-line"></i>
+                <h3>Dashboard Coming Soon</h3>
+                <p>We're working on your dashboard. In the meantime, you can manage your earnings.</p>
+            </div>
+        </div>
+        
+        <div id="store-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-store"></i>
+                <h3>Store Management Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="products-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-box"></i>
+                <h3>Product Management Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="orders-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Order Management Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="community-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <h3>Community Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="coupons-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-tags"></i>
+                <h3>Coupons Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="settings-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-cog"></i>
+                <h3>Settings Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+        
+        <div id="support-content" class="content-section">
+            <div class="empty-state">
+                <i class="fas fa-question-circle"></i>
+                <h3>Support Coming Soon</h3>
+                <p>This section is under development. Please check back later.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Current balance state
+        let availableBalance = 0.00;
+        const MIN_WITHDRAWAL = 50.00;
+        
+        // Handle sidebar navigation
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update active section
+                    const sectionId = this.getAttribute('data-section') + '-content';
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Update page title
+                    const title = this.querySelector('span').textContent;
+                    document.getElementById('page-title').textContent = title + " Dashboard";
+                });
+            });
+        }
+        
+        // Handle notification dropdown
+        function setupNotifications() {
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            
+            notificationBtn.addEventListener('click', () => {
+                notificationsDropdown.classList.toggle('active');
+            });
+            
+            // Close notifications when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.notifications-dropdown') && !e.target.closest('.notification-btn')) {
+                    notificationsDropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        // Withdrawal functions
+        function setWithdrawAmount(amount) {
+            document.getElementById('withdraw-amount').value = amount;
+            updateTransactionSummary();
+        }
+        
+        function updateTransactionSummary() {
+            const amount = parseFloat(document.getElementById('withdraw-amount').value) || 0;
+            const method = document.querySelector('.withdrawal-option.selected').dataset.method;
+            let fee = 0;
+            
+            if (method === 'paypal') {
+                fee = amount * 0.015;
+            } else if (method === 'bank') {
+                fee = 2.00;
+            }
+            
+            const receiveAmount = amount - fee;
+            
+            // Update summary display
+            document.getElementById('summary-amount').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('summary-fee').textContent = `$${fee.toFixed(2)}`;
+            document.getElementById('summary-receive').textContent = `$${receiveAmount.toFixed(2)}`;
+            document.getElementById('summary-method').textContent = method.charAt(0).toUpperCase() + method.slice(1);
+        }
+        
+        // Show transaction alert
+        function showTransactionAlert(message, isSuccess) {
+            const alert = document.getElementById('transaction-alert');
+            const icon = alert.querySelector('.alert-icon');
+            const title = alert.querySelector('.alert-title');
+            const content = alert.querySelector('.alert-message');
+            
+            if (isSuccess) {
+                alert.style.borderLeftColor = 'var(--success)';
+                icon.className = 'fas fa-check-circle alert-icon';
+                title.textContent = 'Transaction Successful';
+                content.textContent = message;
+            } else {
+                alert.style.borderLeftColor = 'var(--error)';
+                icon.className = 'fas fa-exclamation-circle alert-icon';
+                title.textContent = 'Transaction Failed';
+                content.textContent = message;
+            }
+            
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Show inline transaction feedback
+        function showTransactionFeedback(message, isSuccess) {
+            const feedback = document.getElementById('transaction-feedback');
+            feedback.textContent = message;
+            feedback.className = isSuccess ? 'transaction-feedback transaction-success' : 'transaction-feedback transaction-error';
+            feedback.style.display = 'block';
+            
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Prevent text selection
+        function preventTextSelection() {
+            document.addEventListener('mousedown', function(e) {
+                if (e.detail > 1) {
+                    e.preventDefault();
+                }
+            });
+            
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+        }
+        
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            setupNotifications();
+            preventTextSelection();
+            
+            // Set initial balance display
+            document.getElementById('available-balance').textContent = `$${availableBalance.toFixed(2)}`;
+            
+            // Setup withdrawal options
+            document.querySelectorAll('.withdrawal-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.withdrawal-option').forEach(o => {
+                        o.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    updateTransactionSummary();
+                });
+            });
+            
+            // Setup withdraw button
+            document.getElementById('withdraw-btn').addEventListener('click', function() {
+                const amount = parseFloat(document.getElementById('withdraw-amount').value);
+                const method = document.querySelector('.withdrawal-option.selected').dataset.method;
+                const account = document.getElementById('account-details').value;
+                
+                // Validate amount
+                if (!amount || amount <= 0) {
+                    showTransactionFeedback('Please enter a valid withdrawal amount', false);
+                    return;
+                }
+                
+                // Check minimum withdrawal amount
+                if (amount < MIN_WITHDRAWAL) {
+                    showTransactionFeedback(`Minimum withdrawal amount is $${MIN_WITHDRAWAL.toFixed(2)}`, false);
+                    return;
+                }
+                
+                // Check if amount exceeds balance
+                if (amount > availableBalance) {
+                    showTransactionFeedback(`Insufficient funds. Your available balance is $${availableBalance.toFixed(2)}.`, false);
+                    return;
+                }
+                
+                if (!account) {
+                    showTransactionFeedback('Please enter your account details', false);
+                    return;
+                }
+                
+                // Simulate transaction validation
+                const isValidTransaction = Math.random() > 0.5;
+                
+                if (isValidTransaction) {
+                    showTransactionAlert(`Withdrawal request for $${amount.toFixed(2)} via ${method} has been submitted!`, true);
+                    showTransactionFeedback('Transaction is being processed. Funds will arrive within 3-5 business days.', true);
+                    
+                    // Update balance (for demonstration only)
+                    availableBalance -= amount;
+                    document.getElementById('available-balance').textContent = `$${availableBalance.toFixed(2)}`;
+                } else {
+                    showTransactionAlert('Transaction failed: Please verify your account details', false);
+                    showTransactionFeedback('Transaction failed. Please verify your account details and try again.', false);
+                }
+            });
+            
+            // Close alert button
+            document.getElementById('close-alert').addEventListener('click', function() {
+                document.getElementById('transaction-alert').classList.remove('show');
+            });
+            
+            // Update summary when amount changes
+            document.getElementById('withdraw-amount').addEventListener('input', updateTransactionSummary);
+        });
+    </script>
+</body>
+</html>

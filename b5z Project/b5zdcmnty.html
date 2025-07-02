@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z - Professional Community Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --sidebar-bg: rgba(15, 12, 36, 0.98);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --sidebar-width: 280px;
+            --success: #4ecca3;
+            --error: #ff7675;
+            --danger: #ff5252;
+            --warning: #ffb142;
+            --info: #2e86de;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* ====== SIDEBAR STYLES ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(110, 72, 170, 0.3);
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .seller-info {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .seller-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .seller-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .seller-tier {
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+        
+        .menu-item {
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(110, 72, 170, 0.2);
+            color: var(--secondary);
+        }
+        
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 25px;
+        }
+        
+        /* ====== MAIN CONTENT STYLES ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 250px;
+            outline: none;
+        }
+        
+        .notification-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: none;
+        }
+        
+        .notifications-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .notification-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* ====== COMMUNITY STYLES ====== */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .community-card {
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .community-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(110, 72, 170, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .community-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .community-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .community-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .community-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .community-code {
+            display: inline-block;
+            background: rgba(157, 80, 187, 0.2);
+            color: #d8b0ff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .community-members {
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .member-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(110, 72, 170, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-left: -10px;
+            border: 2px solid var(--dark-bg);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .member-avatar.admin::after {
+            content: '★';
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: gold;
+            color: #000;
+            font-size: 0.7rem;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .member-avatar:first-child {
+            margin-left: 0;
+        }
+        
+        .community-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .community-actions .btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 10px;
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.3);
+        }
+        
+        .upload-area {
+            border: 2px dashed rgba(110, 72, 170, 0.5);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(25, 20, 45, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            background: rgba(30, 25, 60, 0.8);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-action-btn:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(110, 72, 170, 0.5);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            overflow: hidden;
+        }
+        
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .message-content {
+            flex: 1;
+        }
+        
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .message-text {
+            word-break: break-word;
+        }
+        
+        .bot-message {
+            background: rgba(110, 72, 170, 0.3);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background: rgba(71, 118, 230, 0.3);
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+        }
+        
+        .admin-message {
+            background: rgba(255, 214, 123, 0.3);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .message-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        
+        .message-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+        
+        .message-action-btn {
+            background: rgba(0,0,0,0.3);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        
+        .chat-input-container {
+            padding: 15px;
+            background: rgba(30, 25, 60, 0.8);
+            border-top: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            border-radius: 50px;
+            color: var(--light-text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .chat-upload-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-upload-btn:hover {
+            background: rgba(110, 72, 170, 0.2);
+        }
+        
+        .chat-send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-send-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .members-container {
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .members-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .members-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.1);
+        }
+        
+        .member-item:last-child {
+            border-bottom: none;
+        }
+        
+        .member-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .member-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .member-action-btn:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .private-chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            margin-top: 25px;
+        }
+        
+        .private-chat-header {
+            padding: 15px 20px;
+            background: rgba(30, 25, 60, 0.8);
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .private-chat-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .private-chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .private-chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .private-chat-input-container {
+            padding: 15px;
+            background: rgba(30, 25, 60, 0.8);
+            border-top: 1px solid rgba(110, 72, 170, 0.3);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            border: 1px solid rgba(110, 72, 170, 0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--light-text);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .confirmation-modal .modal-content {
+            max-width: 450px;
+        }
+        
+        .confirmation-text {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(45deg, #ff5252, #ff7675);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ff5252, #ff7675);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #ff4141, #ff6363);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #ffb142, #ff793f);
+            color: white;
+        }
+        
+        .chat-disabled {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 82, 82, 0.1);
+            border-radius: 10px;
+            margin: 20px;
+        }
+        
+        .chat-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(110, 72, 170, 0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            width: 40px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: var(--success);
+        }
+        
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active::before {
+            transform: translateX(20px);
+        }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+        
+        .toast-success {
+            background: var(--success);
+        }
+        
+        .toast-error {
+            background: var(--error);
+        }
+        
+        .toast-warning {
+            background: var(--warning);
+        }
+        
+        .toast-info {
+            background: var(--info);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .empty-state p {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--light-text);
+            font-weight: 600;
+        }
+        
+        /* ====== CONTENT SECTIONS ====== */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar:hover {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar-header, .seller-info, .menu-item span {
+                display: none;
+            }
+            
+            .sidebar:hover .sidebar-header,
+            .sidebar:hover .seller-info,
+            .sidebar:hover .menu-item span {
+                display: block;
+            }
+            
+            .sidebar:hover .seller-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .sidebar:hover + .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar input {
+                width: 150px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .notifications-dropdown {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex: 1;
+            }
+            
+            .notifications-dropdown {
+                width: 100%;
+                right: -15px;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+    
+    <!-- Dashboard Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-text">B5Z</div>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">S</div>
+                <div class="seller-name">Sarah Johnson</div>
+                <div class="seller-tier">Community Leader</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a class="menu-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="menu-item" data-section="store">
+                <i class="fas fa-store"></i>
+                <span>Store</span>
+            </a>
+            <a class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a class="menu-item" data-section="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </a>
+            <a class="menu-item" data-section="earnings">
+                <i class="fas fa-wallet"></i>
+                <span>Earnings</span>
+            </a>
+            <a class="menu-item active" data-section="community">
+                <i class="fas fa-users"></i>
+                <span>Community</span>
+            </a>
+            <a class="menu-item" data-section="coupons">
+                <i class="fas fa-tags"></i>
+                <span>Coupons</span>
+            </a>
+            <a class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a class="menu-item" data-section="support">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="page-title" id="page-title">Community Dashboard</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search communities..." id="search-input">
+                </div>
+                <div class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="action-btn"><i class="fas fa-check"></i> Mark all as read</button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">New Community Message</div>
+                        <p>You have a new message in Design Masters</p>
+                        <div class="notification-time">10 minutes ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">Community Invitation</div>
+                        <p>You've been invited to join "Web Developers"</p>
+                        <div class="notification-time">2 hours ago</div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-title">New Member</div>
+                        <p>Alex Johnson joined your community</p>
+                        <div class="notification-time">Yesterday</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ====== COMMUNITY SECTION ====== -->
+        <div id="community-content" class="content-section active">
+            <div class="section-card">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title">Your Communities</h2>
+                    <button class="btn btn-primary" id="create-community-btn">
+                        <i class="fas fa-plus"></i> Create Community
+                    </button>
+                </div>
+                
+                <div class="community-grid" id="communities-container">
+                    <!-- Communities will be added here dynamically -->
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">Join a Community</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Access Code</label>
+                            <input type="text" class="form-input" id="access-code-input" placeholder="Enter community access code">
+                        </div>
+                    </div>
+                    <div class="form-col" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" id="join-community-btn" style="width: 100%;">
+                            <i class="fas fa-sign-in-alt"></i> Join Community
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-card" id="community-chat-section" style="display: none;">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-title" id="current-community-name">Design Masters</div>
+                        <div class="chat-actions">
+                            <div class="chat-toggle" id="chat-toggle">
+                                <span>Chat Enabled</span>
+                                <div class="toggle-switch active"></div>
+                            </div>
+                            <button class="chat-action-btn" id="close-chat-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="community-chat-messages">
+                        <!-- Chat messages will be added here -->
+                    </div>
+                    <div class="chat-input-container" id="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Type your message here...">
+                        <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                        <button class="chat-upload-btn" id="image-upload-btn">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="chat-send-btn" id="send-message-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="members-container">
+                    <div class="members-header">
+                        <div class="members-title">Community Members</div>
+                        <div class="members-count" id="members-count">0 members</div>
+                    </div>
+                    <div class="member-list" id="member-list">
+                        <!-- Members will be added here -->
+                    </div>
+                </div>
+                
+                <div class="private-chat-container" id="private-chat-container" style="display: none;">
+                    <div class="private-chat-header">
+                        <div class="private-chat-title" id="private-chat-title">Private Chat with John Doe</div>
+                        <div class="private-chat-actions">
+                            <button class="chat-action-btn" id="close-private-chat-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="private-chat-messages" id="private-chat-messages">
+                        <!-- Private chat messages will be added here -->
+                    </div>
+                    <div class="private-chat-input-container">
+                        <input type="text" class="chat-input" id="private-chat-input" placeholder="Type your private message...">
+                        <input type="file" id="private-image-upload" accept="image/*" style="display: none;">
+                        <button class="chat-upload-btn" id="private-image-upload-btn">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="chat-send-btn" id="send-private-message-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other sections (completely empty) -->
+        <div id="dashboard-content" class="content-section"></div>
+        <div id="store-content" class="content-section"></div>
+        <div id="products-content" class="content-section"></div>
+        <div id="orders-content" class="content-section"></div>
+        <div id="earnings-content" class="content-section"></div>
+        <div id="coupons-content" class="content-section"></div>
+        <div id="settings-content" class="content-section"></div>
+        <div id="support-content" class="content-section"></div>
+    </div>
+    
+    <!-- Community Creation Modal -->
+    <div class="modal" id="community-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeCommunityModal()">&times;</button>
+            <h2 class="modal-title">Create New Community</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Community Name</label>
+                <input type="text" class="form-input" id="community-name-input" placeholder="Enter community name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="community-desc-input" placeholder="Describe your community purpose and goals"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="community-category-input">
+                    <option>Design</option>
+                    <option>Development</option>
+                    <option>Photography</option>
+                    <option>Music</option>
+                    <option>Writing</option>
+                    <option>Marketing</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Privacy Settings</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" name="privacy" value="public" checked> Public
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" name="privacy" value="private"> Private (Invite Only)
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Community Icon</label>
+                <div class="upload-area" id="icon-upload-area">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Drag & drop your icon image here</p>
+                    <p>or <span style="color: var(--primary);">browse files</span></p>
+                    <img id="icon-preview" class="preview-image" alt="Icon Preview">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Community Banner</label>
+                <div class="upload-area" id="banner-upload-area">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Drag & drop your banner image here</p>
+                    <p>or <span style="color: var(--primary);">browse files</span></p>
+                    <img id="banner-preview" class="preview-image" alt="Banner Preview">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-primary" style="width: 100%;" id="create-community-confirm-btn">
+                    <i class="fas fa-plus"></i> Create Community
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Community Management Modal -->
+    <div class="modal" id="management-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeManagementModal()">&times;</button>
+            <h2 class="modal-title" id="management-title">Manage Community</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Access Code</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="form-input" id="access-code-display" readonly>
+                    <button class="btn btn-primary" id="regenerate-code-btn">
+                        <i class="fas fa-sync-alt"></i> Regenerate
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Privacy Settings</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" name="privacy" value="public" id="privacy-public"> Public
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" name="privacy" value="private" id="privacy-private"> Private
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Members</label>
+                <div class="members-container" style="max-height: 300px; margin-top: 10px;">
+                    <div class="member-list" id="management-member-list">
+                        <!-- Members for management will be added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-danger" style="width: 100%;" id="delete-community-btn">
+                    <i class="fas fa-trash"></i> Delete Community
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal confirmation-modal" id="confirmation-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeConfirmationModal()">&times;</button>
+            <h2 class="modal-title">Confirmation Required</h2>
+            
+            <div class="confirmation-text" id="confirmation-message">
+                Are you sure you want to perform this action?
+            </div>
+            
+            <div class="confirmation-buttons">
+                <button class="btn btn-cancel" onclick="closeConfirmationModal()">Cancel</button>
+                <button class="btn btn-confirm" id="confirm-action-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data storage for communities
+        let communities = JSON.parse(localStorage.getItem('communities')) || [];
+        let currentUser = {
+            id: 'user1',
+            name: 'Sarah Johnson',
+            avatar: 'S',
+            isAdmin: true,
+            color: '#6e48aa'
+        };
+        
+        let currentCommunity = null;
+        let currentPrivateChat = null;
+        let currentImage = null;
+        let currentPrivateImage = null;
+        let actionToConfirm = null;
+        let actionData = null;
+        
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            setupNotifications();
+            initializeSampleData();
+            renderCommunities();
+            
+            // Setup community button
+            document.getElementById('create-community-btn').addEventListener('click', openCommunityModal);
+            
+            // Setup join community button
+            document.getElementById('join-community-btn').addEventListener('click', joinCommunity);
+            
+            // Setup chat buttons
+            document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+            document.getElementById('send-private-message-btn').addEventListener('click', sendPrivateMessage);
+            document.getElementById('image-upload-btn').addEventListener('click', () => {
+                document.getElementById('image-upload').click();
+            });
+            document.getElementById('image-upload').addEventListener('change', handleImageUpload);
+            
+            // Setup private chat image upload
+            document.getElementById('private-image-upload-btn').addEventListener('click', () => {
+                document.getElementById('private-image-upload').click();
+            });
+            document.getElementById('private-image-upload').addEventListener('change', handlePrivateImageUpload);
+            
+            // Close chat buttons
+            document.getElementById('close-chat-btn').addEventListener('click', closeCommunityChat);
+            document.getElementById('close-private-chat-btn').addEventListener('click', closePrivateChat);
+            
+            // Chat toggle
+            document.getElementById('chat-toggle').addEventListener('click', toggleChat);
+            
+            // Banner upload
+            document.getElementById('banner-upload-area').addEventListener('click', () => {
+                uploadImage('banner-preview');
+            });
+            
+            // Icon upload
+            document.getElementById('icon-upload-area').addEventListener('click', () => {
+                uploadImage('icon-preview');
+            });
+            
+            // Create community confirmation
+            document.getElementById('create-community-confirm-btn').addEventListener('click', createCommunity);
+            
+            // Regenerate access code
+            document.getElementById('regenerate-code-btn').addEventListener('click', regenerateAccessCode);
+            
+            // Delete community button
+            document.getElementById('delete-community-btn').addEventListener('click', () => {
+                if (currentCommunity) {
+                    showConfirmation('deleteCommunity', currentCommunity.id, `Are you sure you want to delete the "${currentCommunity.name}" community? This action cannot be undone.`);
+                }
+            });
+            
+            // Confirm action button
+            document.getElementById('confirm-action-btn').addEventListener('click', executeConfirmedAction);
+            
+            // Privacy settings
+            document.querySelectorAll('input[name="privacy"]').forEach(radio => {
+                radio.addEventListener('change', updatePrivacySettings);
+            });
+        });
+        
+        // Handle sidebar navigation
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update active section
+                    const sectionId = this.getAttribute('data-section') + '-content';
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Update page title
+                    const title = this.querySelector('span').textContent;
+                    document.getElementById('page-title').textContent = title;
+                    
+                    // Close community chat if leaving community section
+                    if (sectionId !== 'community-content') {
+                        closeCommunityChat();
+                    }
+                });
+            });
+        }
+        
+        // Handle notification dropdown
+        function setupNotifications() {
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            
+            notificationBtn.addEventListener('click', () => {
+                notificationsDropdown.classList.toggle('active');
+            });
+            
+            // Close notifications when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.notifications-dropdown') && !e.target.closest('.notification-btn')) {
+                    notificationsDropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        // Show toast notification
+        function showToast(message, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                 type === 'error' ? 'fa-exclamation-circle' : 
+                                 type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Upload image helper
+        function uploadImage(previewId) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const preview = document.getElementById(previewId);
+                        preview.src = event.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            fileInput.click();
+        }
+        
+        // Render communities
+        function renderCommunities() {
+            const container = document.getElementById('communities-container');
+            container.innerHTML = '';
+            
+            if (communities.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-users"></i>
+                        <h3>No Communities Yet</h3>
+                        <p>Create your first community to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            communities.forEach(community => {
+                const isMember = community.members.some(member => member.id === currentUser.id);
+                
+                if (isMember) {
+                    const isCreator = community.creatorId === currentUser.id;
+                    
+                    const communityCard = document.createElement('div');
+                    communityCard.className = 'community-card';
+                    communityCard.innerHTML = `
+                        <div class="community-header">
+                            <div class="community-icon">
+                                ${community.icon ? `<img src="${community.icon}" alt="${community.name}">` : `<i class="${community.iconClass || 'fas fa-users'}"></i>`}
+                            </div>
+                            <div>
+                                <div class="community-name">${community.name}</div>
+                                <div class="community-code">${community.accessCode ? 'ACCESS CODE: ' + community.accessCode : 'PUBLIC COMMUNITY'}</div>
+                            </div>
+                        </div>
+                        <p>${community.description}</p>
+                        <div class="community-members">
+                            ${community.members.slice(0, 5).map((member, index) => `
+                                <div class="member-avatar ${member.isAdmin ? 'admin' : ''}" title="${member.name}${member.isAdmin ? ' (Admin)' : ''}" style="background: ${member.color || 'rgba(110, 72, 170, 0.5)'};">
+                                    ${member.avatar}
+                                </div>
+                            `).join('')}
+                            ${community.members.length > 5 ? `<div class="member-avatar">+${community.members.length - 5}</div>` : ''}
+                        </div>
+                        <div class="community-actions">
+                            <button class="btn" data-community-id="${community.id}">
+                                <i class="fas fa-comments"></i> Open Chat
+                            </button>
+                            ${isCreator ? `
+                                <button class="btn btn-primary" data-community-id="${community.id}" data-action="manage">
+                                    <i class="fas fa-cog"></i> Manage
+                                </button>
+                            ` : `
+                                <button class="btn btn-danger" data-community-id="${community.id}" data-action="leave">
+                                    <i class="fas fa-sign-out-alt"></i> Leave
+                                </button>
+                            `}
+                        </div>
+                    `;
+                    container.appendChild(communityCard);
+                }
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.community-actions .btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const communityId = this.getAttribute('data-community-id');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (action === 'manage') {
+                        openManagementModal(communityId);
+                    } else if (action === 'leave') {
+                        showConfirmation('leaveCommunity', communityId, `Are you sure you want to leave this community?`);
+                    } else {
+                        openCommunityChat(communityId);
+                    }
+                });
+            });
+        }
+        
+        // Open management modal
+        function openManagementModal(communityId) {
+            currentCommunity = communities.find(c => c.id === communityId);
+            
+            if (!currentCommunity) return;
+            
+            document.getElementById('management-title').textContent = `Manage ${currentCommunity.name}`;
+            document.getElementById('access-code-display').value = currentCommunity.accessCode || 'PUBLIC';
+            
+            // Set privacy radio
+            document.getElementById('privacy-public').checked = currentCommunity.isPublic;
+            document.getElementById('privacy-private').checked = !currentCommunity.isPublic;
+            
+            renderManagementMembers();
+            
+            document.getElementById('management-modal').classList.add('active');
+        }
+        
+        // Update privacy settings
+        function updatePrivacySettings() {
+            if (!currentCommunity) return;
+            
+            const isPublic = document.getElementById('privacy-public').checked;
+            currentCommunity.isPublic = isPublic;
+            
+            if (!isPublic && !currentCommunity.accessCode) {
+                currentCommunity.accessCode = 'CODE' + Math.floor(1000 + Math.random() * 9000);
+            }
+            
+            document.getElementById('access-code-display').value = currentCommunity.accessCode || 'PUBLIC';
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            showToast(`Community set to ${isPublic ? 'public' : 'private'}`, 'success');
+        }
+        
+        // Close management modal
+        function closeManagementModal() {
+            document.getElementById('management-modal').classList.remove('active');
+        }
+        
+        // Render members for management
+        function renderManagementMembers() {
+            const container = document.getElementById('management-member-list');
+            container.innerHTML = '';
+            
+            if (!currentCommunity) return;
+            
+            currentCommunity.members.forEach(member => {
+                const isCurrentUser = member.id === currentUser.id;
+                const memberItem = document.createElement('div');
+                memberItem.className = 'member-item';
+                memberItem.innerHTML = `
+                    <div class="member-avatar ${member.isAdmin ? 'admin' : ''}" title="${member.name}${member.isAdmin ? ' (Admin)' : ''}" style="background: ${member.color || 'rgba(110, 72, 170, 0.5)'};">
+                        ${member.avatar}
+                    </div>
+                    <div>
+                        <div>${member.name}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">${member.isAdmin ? 'Admin' : 'Member'}</div>
+                    </div>
+                    <div class="member-actions">
+                        ${!isCurrentUser ? `
+                            <button class="member-action-btn" title="${member.isAdmin ? 'Remove Admin' : 'Make Admin'}" data-member-id="${member.id}" data-action="${member.isAdmin ? 'removeAdmin' : 'makeAdmin'}">
+                                <i class="${member.isAdmin ? 'fas fa-user-minus' : 'fas fa-crown'}"></i>
+                            </button>
+                            <button class="member-action-btn" title="Remove" data-member-id="${member.id}" data-action="kick">
+                                <i class="fas fa-user-times"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(memberItem);
+            });
+            
+            // Add event listeners to member actions
+            document.querySelectorAll('.member-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-member-id');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (action === 'makeAdmin') {
+                        makeAdmin(memberId);
+                    } else if (action === 'removeAdmin') {
+                        removeAdmin(memberId);
+                    } else if (action === 'kick') {
+                        showConfirmation('kickMember', {communityId: currentCommunity.id, memberId}, `Are you sure you want to remove this member?`);
+                    }
+                });
+            });
+        }
+        
+        // Open community chat
+        function openCommunityChat(communityId) {
+            currentCommunity = communities.find(c => c.id === communityId);
+            
+            if (!currentCommunity) return;
+            
+            document.getElementById('current-community-name').textContent = currentCommunity.name;
+            document.getElementById('community-chat-section').style.display = 'block';
+            
+            // Update chat toggle
+            const toggle = document.querySelector('.toggle-switch');
+            toggle.classList.toggle('active', currentCommunity.chatEnabled);
+            
+            // Render messages
+            renderMessages();
+            
+            // Render members
+            renderMembers();
+            
+            // Update members count
+            document.getElementById('members-count').textContent = `${currentCommunity.members.length} members`;
+            
+            // Scroll to chat section
+            setTimeout(() => {
+                document.getElementById('community-chat-section').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start'
+                });
+            }, 100);
+            
+            // Scroll to bottom of messages
+            setTimeout(() => {
+                document.getElementById('community-chat-messages').scrollTop = 
+                    document.getElementById('community-chat-messages').scrollHeight;
+            }, 300);
+        }
+        
+        // Toggle chat functionality
+        function toggleChat() {
+            if (!currentCommunity) return;
+            
+            const toggle = document.querySelector('.toggle-switch');
+            currentCommunity.chatEnabled = !toggle.classList.contains('active');
+            toggle.classList.toggle('active');
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Add system message
+            if (currentCommunity.messages) {
+                currentCommunity.messages.push({
+                    id: 'msg' + Date.now(),
+                    sender: { id: 'system', name: 'System' },
+                    text: `Chat has been ${currentCommunity.chatEnabled ? 'enabled' : 'disabled'} by ${currentUser.name}`,
+                    timestamp: new Date()
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            renderMessages();
+            
+            showToast(`Chat ${currentCommunity.chatEnabled ? 'enabled' : 'disabled'}`, 'info');
+        }
+        
+        // Render messages
+        function renderMessages() {
+            const container = document.getElementById('community-chat-messages');
+            container.innerHTML = '';
+            
+            if (!currentCommunity || !currentCommunity.messages) return;
+            
+            // Add chat disabled message if needed
+            if (!currentCommunity.chatEnabled) {
+                container.innerHTML = `
+                    <div class="chat-disabled">
+                        <i class="fas fa-comment-slash"></i>
+                        <h3>Chat is Disabled</h3>
+                        <p>Community administrators have disabled chat functionality</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            currentCommunity.messages.forEach(msg => {
+                const isCurrentUser = msg.sender.id === currentUser.id;
+                const isAdmin = msg.sender.isAdmin;
+                const isSystem = msg.sender.id === 'system';
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isSystem ? 'bot-message' : 
+                                       isAdmin ? 'admin-message' : 
+                                       isCurrentUser ? 'user-message' : 'bot-message'}`;
+                
+                // Generate a unique color for each member
+                const memberColor = msg.sender.color || generateColor(msg.sender.id);
+                if (!msg.sender.color) msg.sender.color = memberColor;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar" style="background: ${memberColor}">
+                        ${msg.sender.avatar}
+                    </div>
+                    <div class="message-content">
+                        <div class="message-info">
+                            <span>${msg.sender.name}</span>
+                            <span>${new Date(msg.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                        <div class="message-text">${msg.text}</div>
+                        ${msg.image ? `<img src="${msg.image}" class="message-image" alt="Shared image">` : ''}
+                    </div>
+                    <div class="message-actions">
+                        ${(isCurrentUser || currentUser.isAdmin) && !isSystem ? `
+                            <button class="message-action-btn" title="Delete for me" data-message-id="${msg.id}" data-action="deleteSelf">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            ${currentUser.isAdmin ? `
+                                <button class="message-action-btn" title="Delete for everyone" data-message-id="${msg.id}" data-action="deleteAll">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            ` : ''}
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(messageDiv);
+            });
+            
+            // Add event listeners to message actions
+            document.querySelectorAll('.message-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-message-id');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (action === 'deleteSelf') {
+                        deleteMessage(messageId, 'self');
+                    } else if (action === 'deleteAll') {
+                        deleteMessage(messageId, 'all');
+                    }
+                });
+            });
+        }
+        
+        // Delete a message
+        function deleteMessage(messageId, scope) {
+            if (!currentCommunity || !currentCommunity.messages) return;
+            
+            if (scope === 'all') {
+                // Delete for everyone
+                currentCommunity.messages = currentCommunity.messages.filter(msg => msg.id !== messageId);
+                showToast('Message deleted for everyone', 'success');
+            } else {
+                // Delete for self (soft delete)
+                const message = currentCommunity.messages.find(msg => msg.id === messageId);
+                if (message) {
+                    if (!message.deletedFor) message.deletedFor = [];
+                    message.deletedFor.push(currentUser.id);
+                }
+                showToast('Message deleted for you', 'info');
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            renderMessages();
+        }
+        
+        // Generate a color from user ID
+        function generateColor(userId) {
+            const colors = [
+                '#6e48aa', '#9d50bb', '#4776E6', '#4ecca3', '#ff7675',
+                '#ffb142', '#2e86de', '#a55eea', '#fd9644', '#26de81'
+            ];
+            const index = Array.from(userId).reduce((sum, char) => sum + char.charCodeAt(0), 0) % colors.length;
+            return colors[index];
+        }
+        
+        // Render members
+        function renderMembers() {
+            const container = document.getElementById('member-list');
+            container.innerHTML = '';
+            
+            if (!currentCommunity) return;
+            
+            currentCommunity.members.forEach(member => {
+                const memberItem = document.createElement('div');
+                memberItem.className = 'member-item';
+                memberItem.innerHTML = `
+                    <div class="member-avatar ${member.isAdmin ? 'admin' : ''}" title="${member.name}${member.isAdmin ? ' (Admin)' : ''}" style="background: ${member.color || generateColor(member.id)};">
+                        ${member.avatar}
+                    </div>
+                    <div>
+                        <div>${member.name}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">${member.isAdmin ? 'Admin' : 'Member'}</div>
+                    </div>
+                    <div class="member-actions">
+                        <button class="member-action-btn" title="Message" data-member-id="${member.id}">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                        ${currentUser.isAdmin && member.id !== currentUser.id ? `
+                            <button class="member-action-btn" title="${member.isAdmin ? 'Remove Admin' : 'Make Admin'}" data-member-id="${member.id}" data-action="${member.isAdmin ? 'removeAdmin' : 'makeAdmin'}">
+                                <i class="${member.isAdmin ? 'fas fa-user-minus' : 'fas fa-crown'}"></i>
+                            </button>
+                            <button class="member-action-btn" title="Remove" data-member-id="${member.id}" data-action="kick">
+                                <i class="fas fa-user-times"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(memberItem);
+            });
+            
+            // Add event listeners to member actions
+            document.querySelectorAll('.member-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-member-id');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (action === 'makeAdmin') {
+                        makeAdmin(memberId);
+                    } else if (action === 'removeAdmin') {
+                        removeAdmin(memberId);
+                    } else if (action === 'kick') {
+                        showConfirmation('kickMember', {communityId: currentCommunity.id, memberId}, `Are you sure you want to remove this member?`);
+                    } else {
+                        openPrivateChat(memberId);
+                    }
+                });
+            });
+        }
+        
+        // Make member admin
+        function makeAdmin(memberId) {
+            const member = currentCommunity.members.find(m => m.id === memberId);
+            if (member) {
+                member.isAdmin = true;
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                renderMembers();
+                if (document.getElementById('management-modal').classList.contains('active')) {
+                    renderManagementMembers();
+                }
+                
+                // Add system message
+                if (currentCommunity.messages) {
+                    currentCommunity.messages.push({
+                        id: 'msg' + Date.now(),
+                        sender: { id: 'system', name: 'System' },
+                        text: `${member.name} has been promoted to admin by ${currentUser.name}`,
+                        timestamp: new Date()
+                    });
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                renderMessages();
+                
+                showToast(`${member.name} is now an admin!`, 'success');
+            }
+        }
+        
+        // Remove admin status
+        function removeAdmin(memberId) {
+            const member = currentCommunity.members.find(m => m.id === memberId);
+            if (member) {
+                member.isAdmin = false;
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                renderMembers();
+                if (document.getElementById('management-modal').classList.contains('active')) {
+                    renderManagementMembers();
+                }
+                
+                // Add system message
+                if (currentCommunity.messages) {
+                    currentCommunity.messages.push({
+                        id: 'msg' + Date.now(),
+                        sender: { id: 'system', name: 'System' },
+                        text: `${member.name} has been demoted from admin by ${currentUser.name}`,
+                        timestamp: new Date()
+                    });
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                renderMessages();
+                
+                showToast(`${member.name} is no longer an admin!`, 'success');
+            }
+        }
+        
+        // Kick member from community
+        function kickMember(communityId, memberId) {
+            const community = communities.find(c => c.id === communityId);
+            if (!community) return;
+            
+            const member = community.members.find(m => m.id === memberId);
+            if (member) {
+                // Remove member from community
+                community.members = community.members.filter(m => m.id !== memberId);
+                
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                
+                // Add system message
+                if (community.messages) {
+                    community.messages.push({
+                        id: 'msg' + Date.now(),
+                        sender: { id: 'system', name: 'System' },
+                        text: `${member.name} has been removed from the community by ${currentUser.name}`,
+                        timestamp: new Date()
+                    });
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('communities', JSON.stringify(communities));
+                
+                // Close private chat if open with this member
+                if (currentPrivateChat && currentPrivateChat.id === memberId) {
+                    closePrivateChat();
+                }
+                
+                // Update UI if we're viewing this community
+                if (currentCommunity && currentCommunity.id === communityId) {
+                    renderMembers();
+                    renderMessages();
+                    document.getElementById('members-count').textContent = `${currentCommunity.members.length} members`;
+                }
+                
+                showToast(`${member.name} has been removed from the community!`, 'success');
+            }
+        }
+        
+        // Open private chat
+        function openPrivateChat(memberId) {
+            const member = currentCommunity.members.find(m => m.id === memberId);
+            if (!member) return;
+            
+            currentPrivateChat = member;
+            document.getElementById('private-chat-title').textContent = `Private Chat with ${member.name}`;
+            document.getElementById('private-chat-container').style.display = 'flex';
+            
+            // Render private messages
+            renderPrivateMessages();
+            
+            // Scroll to private chat container
+            setTimeout(() => {
+                document.getElementById('private-chat-container').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start'
+                });
+            }, 100);
+        }
+        
+        // Close private chat
+        function closePrivateChat() {
+            document.getElementById('private-chat-container').style.display = 'none';
+            currentPrivateChat = null;
+        }
+        
+        // Render private messages
+        function renderPrivateMessages() {
+            const container = document.getElementById('private-chat-messages');
+            container.innerHTML = '';
+            
+            if (!currentPrivateChat || !currentCommunity || !currentCommunity.privateMessages) return;
+            
+            // Filter messages between current user and selected member
+            const privateMessages = currentCommunity.privateMessages.filter(msg => 
+                (msg.sender.id === currentUser.id && msg.receiver.id === currentPrivateChat.id) ||
+                (msg.sender.id === currentPrivateChat.id && msg.receiver.id === currentUser.id)
+            );
+            
+            privateMessages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.sender.id === currentUser.id ? 'user-message' : 'bot-message'}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar" style="background: ${msg.sender.color || generateColor(msg.sender.id)};">
+                        ${msg.sender.avatar}
+                    </div>
+                    <div class="message-content">
+                        <div class="message-info">
+                            <span>${msg.sender.name}</span>
+                            <span>${new Date(msg.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                        <div class="message-text">${msg.text}</div>
+                        ${msg.image ? `<img src="${msg.image}" class="message-image" alt="Shared image">` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+        
+        // Send message
+        function sendMessage() {
+            if (!currentCommunity || !currentCommunity.chatEnabled) return;
+            
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            
+            if (!text && !currentImage) return;
+            
+            if (!currentCommunity.messages) {
+                currentCommunity.messages = [];
+            }
+            
+            currentCommunity.messages.push({
+                id: 'msg' + Date.now(),
+                sender: currentUser,
+                text: text,
+                timestamp: new Date(),
+                image: currentImage || null
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Render messages
+            renderMessages();
+            
+            // Clear input
+            input.value = '';
+            currentImage = null;
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                document.getElementById('community-chat-messages').scrollTop = 
+                    document.getElementById('community-chat-messages').scrollHeight;
+            }, 100);
+        }
+        
+        // Send private message
+        function sendPrivateMessage() {
+            const input = document.getElementById('private-chat-input');
+            const text = input.value.trim();
+            
+            if (!text && !currentPrivateImage) return;
+            
+            if (!currentCommunity.privateMessages) {
+                currentCommunity.privateMessages = [];
+            }
+            
+            currentCommunity.privateMessages.push({
+                id: 'pmsg' + Date.now(),
+                sender: currentUser,
+                receiver: currentPrivateChat,
+                text: text,
+                image: currentPrivateImage || null,
+                timestamp: new Date()
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Render private messages
+            renderPrivateMessages();
+            
+            // Clear input
+            input.value = '';
+            currentPrivateImage = null;
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                document.getElementById('private-chat-messages').scrollTop = 
+                    document.getElementById('private-chat-messages').scrollHeight;
+            }, 100);
+        }
+        
+        // Handle image upload
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentImage = event.target.result;
+                    // Auto-send the image
+                    sendMessage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Handle private image upload
+        function handlePrivateImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentPrivateImage = event.target.result;
+                    // Auto-send the image
+                    sendPrivateMessage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Open community modal
+        function openCommunityModal() {
+            // Check if user already has a community
+            const userCommunities = communities.filter(c => c.creatorId === currentUser.id);
+            if (userCommunities.length > 0) {
+                showConfirmation('createNewCommunity', null, `You already have a community. Creating a new one will delete your existing community. Are you sure you want to proceed?`);
+                return;
+            }
+            
+            document.getElementById('community-modal').classList.add('active');
+        }
+        
+        // Close community modal
+        function closeCommunityModal() {
+            document.getElementById('community-modal').classList.remove('active');
+        }
+        
+        // Create community
+        function createCommunity() {
+            const name = document.getElementById('community-name-input').value;
+            const description = document.getElementById('community-desc-input').value;
+            const category = document.getElementById('community-category-input').value;
+            const privacy = document.querySelector('input[name="privacy"]:checked').value;
+            const icon = document.getElementById('icon-preview').src || '';
+            const banner = document.getElementById('banner-preview').src || '';
+            
+            if (!name || !description) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Delete existing community if any
+            communities = communities.filter(c => c.creatorId !== currentUser.id);
+            
+            const newCommunity = {
+                id: 'com' + Date.now(),
+                name: name,
+                description: description,
+                category: category,
+                isPublic: privacy === 'public',
+                accessCode: privacy === 'private' ? 'CODE' + Math.floor(1000 + Math.random() * 9000) : null,
+                icon: icon,
+                banner: banner,
+                creatorId: currentUser.id,
+                members: [currentUser],
+                messages: [{
+                    id: 'msg' + Date.now(),
+                    sender: { id: 'system', name: 'System' },
+                    text: `Welcome to the ${name} community! Chat has been enabled.`,
+                    timestamp: new Date()
+                }],
+                privateMessages: [],
+                chatEnabled: true
+            };
+            
+            communities.push(newCommunity);
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            closeCommunityModal();
+            renderCommunities();
+            
+            const accessMessage = newCommunity.accessCode ? 
+                `Access code: ${newCommunity.accessCode}` : 
+                'This is a public community';
+                
+            showToast(`Community "${name}" created successfully! ${accessMessage}`, 'success');
+        }
+        
+        // Regenerate access code
+        function regenerateAccessCode() {
+            if (!currentCommunity) return;
+            
+            currentCommunity.accessCode = 'CODE' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('access-code-display').value = currentCommunity.accessCode;
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            showToast(`Access code regenerated: ${currentCommunity.accessCode}`, 'success');
+        }
+        
+        // Join community
+        function joinCommunity() {
+            const accessCode = document.getElementById('access-code-input').value.trim();
+            
+            if (!accessCode) {
+                showToast('Please enter an access code', 'error');
+                return;
+            }
+            
+            const community = communities.find(c => c.accessCode === accessCode);
+            
+            if (!community) {
+                showToast('Invalid access code. Please try again.', 'error');
+                return;
+            }
+            
+            // Check if user is already a member
+            if (community.members.some(m => m.id === currentUser.id)) {
+                showToast('You are already a member of this community', 'warning');
+                return;
+            }
+            
+            // Add user to community as normal member (not admin)
+            const newMember = {...currentUser, isAdmin: false};
+            community.members.push(newMember);
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Add welcome message
+            if (!community.messages) community.messages = [];
+            community.messages.push({
+                id: 'msg' + Date.now(),
+                sender: { id: 'system', name: 'System' },
+                text: `${currentUser.name} has joined the community!`,
+                timestamp: new Date()
+            });
+            
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            showToast(`You have successfully joined "${community.name}"!`, 'success');
+            renderCommunities();
+            document.getElementById('access-code-input').value = '';
+        }
+        
+        // Leave community
+        function leaveCommunity(communityId) {
+            const community = communities.find(c => c.id === communityId);
+            if (!community) return;
+            
+            community.members = community.members.filter(m => m.id !== currentUser.id);
+            
+            // Add system message
+            if (community.messages) {
+                community.messages.push({
+                    id: 'msg' + Date.now(),
+                    sender: { id: 'system', name: 'System' },
+                    text: `${currentUser.name} has left the community`,
+                    timestamp: new Date()
+                });
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Close chat if open
+            if (currentCommunity && currentCommunity.id === communityId) {
+                closeCommunityChat();
+            }
+            
+            renderCommunities();
+            showToast(`You have left the "${community.name}" community`, 'info');
+        }
+        
+        // Delete community
+        function deleteCommunity(communityId) {
+            communities = communities.filter(c => c.id !== communityId);
+            localStorage.setItem('communities', JSON.stringify(communities));
+            
+            // Close chat if open
+            if (currentCommunity && currentCommunity.id === communityId) {
+                closeCommunityChat();
+            }
+            
+            closeManagementModal();
+            renderCommunities();
+            showToast('Community has been deleted', 'success');
+        }
+        
+        // Show confirmation dialog
+        function showConfirmation(action, data, message) {
+            actionToConfirm = action;
+            actionData = data;
+            document.getElementById('confirmation-message').textContent = message;
+            document.getElementById('confirmation-modal').classList.add('active');
+        }
+        
+        // Close confirmation modal
+        function closeConfirmationModal() {
+            document.getElementById('confirmation-modal').classList.remove('active');
+        }
+        
+        // Execute confirmed action
+        function executeConfirmedAction() {
+            closeConfirmationModal();
+            
+            switch(actionToConfirm) {
+                case 'leaveCommunity':
+                    leaveCommunity(actionData);
+                    break;
+                case 'deleteCommunity':
+                    deleteCommunity(actionData);
+                    break;
+                case 'kickMember':
+                    kickMember(actionData.communityId, actionData.memberId);
+                    break;
+                case 'createNewCommunity':
+                    createCommunity();
+                    break;
+            }
+            
+            actionToConfirm = null;
+            actionData = null;
+        }
+        
+        // Close community chat
+        function closeCommunityChat() {
+            document.getElementById('community-chat-section').style.display = 'none';
+            document.getElementById('private-chat-container').style.display = 'none';
+            currentCommunity = null;
+            currentPrivateChat = null;
+        }
+        
+        // Sample communities for demo
+        function initializeSampleData() {
+            if (communities.length === 0) {
+                communities = [
+                    {
+                        id: 'com1',
+                        name: 'Design Masters',
+                        description: 'Community for professional designers to share insights and collaborate',
+                        category: 'Design',
+                        isPublic: false,
+                        accessCode: 'DESIGN2023',
+                        icon: '',
+                        banner: '',
+                        creatorId: 'user1',
+                        members: [
+                            {id: 'user1', name: 'Sarah Johnson', avatar: 'S', isAdmin: true, color: '#6e48aa'},
+                            {id: 'user2', name: 'Alex Chen', avatar: 'A', isAdmin: false, color: '#4ecca3'},
+                            {id: 'user3', name: 'Michael Brown', avatar: 'M', isAdmin: false, color: '#ff7675'}
+                        ],
+                        messages: [
+                            {
+                                id: 'msg1',
+                                sender: {id: 'system', name: 'System'},
+                                text: 'Welcome to Design Masters community!',
+                                timestamp: new Date(Date.now() - 86400000)
+                            },
+                            {
+                                id: 'msg2',
+                                sender: {id: 'user1', name: 'Sarah Johnson', avatar: 'S', isAdmin: true, color: '#6e48aa'},
+                                text: 'Hello everyone! Welcome to our design community.',
+                                timestamp: new Date(Date.now() - 43200000)
+                            },
+                            {
+                                id: 'msg3',
+                                sender: {id: 'user2', name: 'Alex Chen', avatar: 'A', isAdmin: false, color: '#4ecca3'},
+                                text: "Thanks for having me! I'm excited to be here.",
+                                timestamp: new Date(Date.now() - 36000000)
+                            }
+                        ],
+                        privateMessages: [
+                            {
+                                id: 'pmsg1',
+                                sender: {id: 'user1', name: 'Sarah Johnson', avatar: 'S', isAdmin: true, color: '#6e48aa'},
+                                receiver: {id: 'user2', name: 'Alex Chen', avatar: 'A', isAdmin: false, color: '#4ecca3'},
+                                text: "Hi Alex! Could you help me with this design?",
+                                timestamp: new Date(Date.now() - 43200000)
+                            },
+                            {
+                                id: 'pmsg2',
+                                sender: {id: 'user2', name: 'Alex Chen', avatar: 'A', isAdmin: false, color: '#4ecca3'},
+                                receiver: {id: 'user1', name: 'Sarah Johnson', avatar: 'S', isAdmin: true, color: '#6e48aa'},
+                                text: "Sure Sarah! What do you need help with?",
+                                timestamp: new Date(Date.now() - 36000000)
+                            }
+                        ],
+                        chatEnabled: true
+                    }
+                ];
+                localStorage.setItem('communities', JSON.stringify(communities));
+            }
+        }
+    </script>
+</body>
+</html>
