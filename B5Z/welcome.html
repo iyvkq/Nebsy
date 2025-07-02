@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B5Z | Seller Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛒</text></svg>">
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --light-text: #f0f0f0;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.7);
+            --header-height: 80px;
+            --success: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            padding-top: var(--header-height);
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE/Edge */
+        }
+        
+        /* Copy protection overlay */
+        .copy-protection-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: transparent;
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Professional Header */
+        header {
+            background: rgba(15, 12, 36, 0.98);
+            backdrop-filter: blur(10px);
+            height: var(--header-height);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(110, 72, 170, 0.3);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .logo-protection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            pointer-events: none; /* Prevent logo interaction */
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 5px 0;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--secondary);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--light-text);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(110, 72, 170, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* Dashboard Hero */
+        .dashboard-hero {
+            padding: 80px 0 50px;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            background: radial-gradient(ellipse at top, rgba(71, 118, 230, 0.1) 0%, transparent 70%),
+                        radial-gradient(ellipse at bottom, rgba(157, 80, 187, 0.1) 0%, transparent 70%);
+        }
+        
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--glow);
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .welcome-card h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        
+        .welcome-card p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .user-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(110, 72, 170, 0.2);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(110, 72, 170, 0.3);
+        }
+        
+        .user-level i {
+            color: var(--accent);
+        }
+        
+        /* Floating Elements */
+        .floating-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+            animation: float 6s infinite ease-in-out;
+            pointer-events: none; /* Prevent interaction */
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                height: 70px;
+            }
+            
+            .dashboard-hero {
+                padding: 60px 0 30px;
+            }
+            
+            .welcome-card {
+                padding: 30px;
+            }
+            
+            .welcome-card h1 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .header-content {
+                justify-content: center;
+            }
+        }
+        
+        /* Prevent image dragging */
+        img, .floating-icon, .logo-text {
+            -webkit-user-drag: none;
+            user-drag: none;
+            -webkit-touch-callout: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Copy Protection Overlay -->
+    <div class="copy-protection-overlay" id="copy-protection"></div>
+    
+    <!-- Professional Fixed Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-text">B5Z</div>
+                    <div class="logo-protection"></div>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Dashboard</a></li>
+                        <li><a href="#">Products</a></li>
+                        <li><a href="#">Library</a></li>
+                        <li><a href="#">Sales</a></li>
+                        <li><a href="#">Profile</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="nav-buttons">
+                    <div class="user-avatar">
+                        <div class="avatar">U</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <!-- Floating Elements -->
+        <div class="floating-icon" style="top: 20%; left: 5%;"><i class="fas fa-chart-line"></i></div>
+        <div class="floating-icon" style="top: 15%; right: 15%;"><i class="fas fa-shopping-cart"></i></div>
+        <div class="floating-icon" style="top: 70%; left: 10%;"><i class="fas fa-wallet"></i></div>
+        <div class="floating-icon" style="top: 65%; right: 8%;"><i class="fas fa-trophy"></i></div>
+        
+        <div class="container">
+            <div class="welcome-card">
+                <div class="user-level">
+                    <i class="fas fa-store"></i>
+                    <span>Seller Account</span>
+                </div>
+                <h1>Welcome Back!</h1>
+                <p>You have successfully logged in to your B5Z Seller Dashboard. Manage your products, track sales, and grow your business.</p>
+                
+                <div class="hero-cta" style="margin-top: 40px;">
+                    <a href="dashboard.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Let's Go!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        // Prevent right-click context menu
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+        
+        // Prevent image dragging
+        document.addEventListener('dragstart', function(event) {
+            if (event.target.tagName === 'IMG' || event.target.classList.contains('floating-icon') || 
+                event.target.classList.contains('avatar')) {
+                event.preventDefault();
+            }
+        });
+        
+        // Prevent text selection
+        document.addEventListener('selectstart', function(event) {
+            event.preventDefault();
+        });
+        
+        // Prevent copy action
+        document.addEventListener('copy', function(event) {
+            event.preventDefault();
+        });
+        
+        // Prevent cut action
+        document.addEventListener('cut', function(event) {
+            event.preventDefault();
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            } else {
+                header.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.5)';
+            }
+        });
+        
+        // Floating icons animation
+        const floatingIcons = document.querySelectorAll('.floating-icon');
+        floatingIcons.forEach((icon, index) => {
+            icon.style.animationDelay = `${index * 1.5}s`;
+        });
+    </script>
+</body>
+</html>

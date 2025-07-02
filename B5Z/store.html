@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Products Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #6e48aa;
+            --primary-dark: #4d2d87;
+            --secondary: #9d50bb;
+            --accent: #4776E6;
+            --dark-bg: #0f0c24;
+            --darker-bg: #0a0818;
+            --card-bg: rgba(30, 25, 60, 0.8);
+            --light-text: #f0f0f0;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --border: rgba(110, 72, 170, 0.3);
+            --glow: 0 0 20px rgba(110, 72, 170, 0.4);
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--light-text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: var(--darker-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+        
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(15, 12, 36, 0.98);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 1px solid var(--border);
+            width: 300px;
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            padding: 8px;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        /* Main Content */
+        .store-content {
+            display: flex;
+            padding: 30px;
+            gap: 25px;
+        }
+        
+        .settings-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .preview-panel {
+            flex: 1;
+        }
+        
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #d8b0ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #b0b0ff;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(25, 20, 45, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(25, 20, 45, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .emoji-option {
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 2rem;
+        }
+        
+        .emoji-option:hover, .emoji-option.selected {
+            border-color: var(--primary);
+            background: rgba(110, 72, 170, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .emoji-option.selected {
+            box-shadow: var(--glow);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(25, 20, 45, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Color Picker */
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 0 3px var(--dark-bg), 0 0 0 5px var(--primary);
+        }
+        
+        .custom-color {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(110, 72, 170, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 72, 170, 0.8);
+        }
+        
+        .btn-delete {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ff6b6b;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-delete:hover {
+            background: rgba(244, 67, 54, 0.3);
+        }
+        
+        /* Links Section */
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(25, 20, 45, 0.5);
+            border-radius: 10px;
+        }
+        
+        .link-input {
+            flex: 1;
+        }
+        
+        /* Preview Section */
+        .preview-banner {
+            height: 220px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 15px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+        }
+        
+        .preview-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--accent);
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 3px solid var(--dark-bg);
+        }
+        
+        .preview-channel-name {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .preview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .preview-stat {
+            text-align: center;
+            background: rgba(25, 20, 45, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .preview-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .preview-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .preview-content {
+            background: rgba(25, 20, 45, 0.4);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        /* Products Section */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .product-card {
+            background: rgba(30, 25, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .product-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .product-name {
+            font-size: 0.85rem;
+        }
+        
+        .product-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(244, 67, 54, 0.2);
+            color: #ff6b6b;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .product-card:hover .product-delete {
+            opacity: 1;
+        }
+        
+        /* Messages */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            background: var(--success);
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+        }
+        
+        .message.show {
+            transform: translateX(0);
+        }
+        
+        /* Toggle */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(110, 72, 170, 0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .store-content {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .emoji-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .emoji-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .preview-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="page-title">Digital Products Store</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="global-search" placeholder="Search products, settings...">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Store Content -->
+        <div class="store-content">
+            <!-- Settings Panel -->
+            <div class="settings-panel">
+                <!-- Brand Identity -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-palette"></i> Brand Identity</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Channel Banner</label>
+                        <div class="upload-area">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p>Drag & drop banner or select an emoji below</p>
+                        </div>
+                        
+                        <div class="emoji-grid">
+                            <div class="emoji-option">🖥️</div>
+                            <div class="emoji-option">📱</div>
+                            <div class="emoji-option">🎮</div>
+                            <div class="emoji-option">💻</div>
+                            <div class="emoji-option">🖌️</div>
+                            <div class="emoji-option">🎨</div>
+                            <div class="emoji-option">📊</div>
+                            <div class="emoji-option">🔌</div>
+                            <div class="emoji-option">📀</div>
+                            <div class="emoji-option">🛸</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Channel Logo</label>
+                        <div class="upload-area">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p>Drag & drop logo or select an emoji below</p>
+                        </div>
+                        
+                        <div class="emoji-grid">
+                            <div class="emoji-option">💎</div>
+                            <div class="emoji-option">🚀</div>
+                            <div class="emoji-option">🌟</div>
+                            <div class="emoji-option">🔮</div>
+                            <div class="emoji-option">🎯</div>
+                            <div class="emoji-option">⚡</div>
+                            <div class="emoji-option">🌐</div>
+                            <div class="emoji-option">🧩</div>
+                            <div class="emoji-option">🔑</div>
+                            <div class="emoji-option">🛡️</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Channel Name</label>
+                        <input type="text" class="form-input" id="channel-name" value="Digital Design Studio">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Channel Description</label>
+                        <textarea class="form-textarea" id="channel-description">Premium digital design resources and tools for creative professionals. Elevate your projects with our high-quality assets.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Brand Color</label>
+                        <div class="color-palette">
+                            <div class="color-option selected" style="background: #6e48aa;"></div>
+                            <div class="color-option" style="background: #4776E6;"></div>
+                            <div class="color-option" style="background: #9d50bb;"></div>
+                            <div class="color-option" style="background: #4ecca3;"></div>
+                            <div class="color-option" style="background: #f9a826;"></div>
+                            <div class="color-option" style="background: #ff5252;"></div>
+                        </div>
+                        <div class="custom-color">
+                            <input type="color" id="custom-color" value="#6e48aa">
+                            <label for="custom-color">Custom Color</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Channel Stats -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-chart-line"></i> Channel Statistics</h2>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Followers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Views</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Products</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Products Sold</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Management -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-box"></i> Digital Products</h2>
+                        <div class="toggle-container">
+                            <span>Show Products</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show-products-toggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="products-container" class="products-grid">
+                        <div class="product-card">
+                            <div class="product-emoji">🎨</div>
+                            <div class="product-name">UI Kit</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-emoji">📱</div>
+                            <div class="product-name">Mobile Template</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-emoji">🖼️</div>
+                            <div class="product-name">Illustration Pack</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-emoji">🎧</div>
+                            <div class="product-name">Sound Effects</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-emoji">📊</div>
+                            <div class="product-name">Data Visualization</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-emoji">📝</div>
+                            <div class="product-name">Content Template</div>
+                            <div class="product-delete">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="add-product-btn" style="margin-top: 20px;">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Preview Panel -->
+            <div class="preview-panel">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-eye"></i> Store Preview</h2>
+                    </div>
+                    
+                    <div class="preview-banner">
+                        🖥️
+                        <div class="preview-logo">💎</div>
+                        <div id="preview-channel-name" class="preview-channel-name">Digital Design Studio</div>
+                    </div>
+                    
+                    <div class="preview-stats">
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">0</div>
+                            <div class="preview-stat-label">Followers</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">0</div>
+                            <div class="preview-stat-label">Views</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">0</div>
+                            <div class="preview-stat-label">Products</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">0</div>
+                            <div class="preview-stat-label">Sold</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value">0.0</div>
+                            <div class="preview-stat-label">Rating</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-content">
+                        <p id="preview-description">Premium digital design resources and tools for creative professionals. Elevate your projects with our high-quality assets.</p>
+                        
+                        <div class="section-header" style="margin: 20px 0 15px;">
+                            <h3 class="section-title"><i class="fas fa-users"></i> Our Community</h3>
+                        </div>
+                        <p>Join our community of designers and developers to share knowledge and collaborate.</p>
+                        
+                        <div class="section-header" style="margin: 20px 0 15px;">
+                            <h3 class="section-title"><i class="fas fa-link"></i> Links</h3>
+                        </div>
+                        <div id="preview-links">
+                            <div class="link-item">
+                                <i class="fab fa-youtube"></i>
+                                <span>youtube.com/digitaldesign</span>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <div class="link-item">
+                                <i class="fab fa-instagram"></i>
+                                <span>instagram.com/digitaldesign</span>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <div class="link-item">
+                                <i class="fas fa-globe"></i>
+                                <span>digitaldesignstudio.com</span>
+                                <button class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="section-header" style="margin: 25px 0 15px;">
+                            <h3 class="section-title"><i class="fas fa-star"></i> Featured Products</h3>
+                        </div>
+                        <div id="preview-products" class="products-grid">
+                            <!-- Products will appear here based on toggle -->
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="save-changes-btn" style="width: 100%; margin-top: 30px;">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Message -->
+    <div class="message">
+        <i class="fas fa-check-circle"></i>
+        Changes saved successfully!
+    </div>
+    
+    <script>
+        // Initialize state
+        let showProducts = true;
+        const digitalProducts = [
+            { emoji: "🎨", name: "UI Kit" },
+            { emoji: "📱", name: "Mobile Template" },
+            { emoji: "🖼️", name: "Illustration Pack" },
+            { emoji: "🎧", name: "Sound Effects" },
+            { emoji: "📊", name: "Data Visualization" },
+            { emoji: "📝", name: "Content Template" }
+        ];
+        
+        // Emoji selection
+        document.querySelectorAll('.emoji-option').forEach(emoji => {
+            emoji.addEventListener('click', function() {
+                // Remove selected class from siblings
+                this.parentElement.querySelectorAll('.emoji-option').forEach(e => {
+                    e.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked emoji
+                this.classList.add('selected');
+                
+                // Update preview
+                if(this.parentElement.previousElementSibling.querySelector('.form-label').textContent.includes('Banner')) {
+                    document.querySelector('.preview-banner').textContent = this.textContent;
+                } else {
+                    document.querySelector('.preview-logo').textContent = this.textContent;
+                }
+            });
+        });
+        
+        // Color selection
+        document.querySelectorAll('.color-option').forEach(color => {
+            color.addEventListener('click', function() {
+                // Remove selected class from siblings
+                this.parentElement.querySelectorAll('.color-option').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked color
+                this.classList.add('selected');
+                
+                // Update custom color picker
+                document.getElementById('custom-color').value = 
+                    getComputedStyle(this).backgroundColor;
+                    
+                // Update banner gradient
+                const gradient = `linear-gradient(45deg, ${getComputedStyle(this).backgroundColor}, var(--accent))`;
+                document.querySelector('.preview-banner').style.background = gradient;
+            });
+        });
+        
+        // Custom color change
+        document.getElementById('custom-color').addEventListener('input', function() {
+            // Find the custom option and update its color
+            const customColor = this.value;
+            
+            // Update the first color option to match the custom color
+            document.querySelector('.color-option').style.backgroundColor = customColor;
+            document.querySelector('.color-option').click();
+        });
+        
+        // Delete link
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.link-item').remove();
+            });
+        });
+        
+        // Delete product
+        document.querySelectorAll('.product-delete').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.closest('.product-card').remove();
+                updateProductCount();
+            });
+        });
+        
+        // Show/Hide products toggle
+        document.getElementById('show-products-toggle').addEventListener('change', function() {
+            showProducts = this.checked;
+            updateProductVisibility();
+        });
+        
+        // Add new product
+        document.getElementById('add-product-btn').addEventListener('click', function() {
+            const newEmoji = prompt("Enter an emoji for your new product:", "🛒");
+            const newName = prompt("Enter product name:", "New Digital Product");
+            
+            if(newEmoji && newName) {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-emoji">${newEmoji}</div>
+                    <div class="product-name">${newName}</div>
+                    <div class="product-delete">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                
+                // Add delete functionality
+                productCard.querySelector('.product-delete').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.closest('.product-card').remove();
+                    updateProductCount();
+                });
+                
+                document.getElementById('products-container').appendChild(productCard);
+                updateProductCount();
+            }
+        });
+        
+        // Save changes
+        document.getElementById('save-changes-btn').addEventListener('click', function() {
+            // Update preview with current values
+            document.getElementById('preview-channel-name').textContent = 
+                document.getElementById('channel-name').value;
+                
+            document.getElementById('preview-description').textContent = 
+                document.getElementById('channel-description').value;
+            
+            // Show success message
+            const message = document.querySelector('.message');
+            message.classList.add('show');
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
+        });
+        
+        // Search functionality
+        document.getElementById('global-search').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = this.value.toLowerCase();
+                if(!searchTerm) return;
+                
+                // Search products
+                let found = false;
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                    if(productName.includes(searchTerm)) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.style.boxShadow = '0 0 0 3px var(--primary)';
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                        }, 3000);
+                        found = true;
+                    }
+                });
+                
+                if(!found) {
+                    alert(`No results found for "${searchTerm}"`);
+                }
+            }
+        });
+        
+        // Update product visibility
+        function updateProductVisibility() {
+            const previewProducts = document.getElementById('preview-products');
+            previewProducts.innerHTML = '';
+            
+            if(showProducts) {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const clone = card.cloneNode(true);
+                    clone.querySelector('.product-delete').remove();
+                    previewProducts.appendChild(clone);
+                });
+            }
+        }
+        
+        // Update product count
+        function updateProductCount() {
+            const count = document.querySelectorAll('.product-card').length;
+            document.querySelector('.stat-value:nth-child(3)').textContent = count;
+            document.querySelector('.preview-stat-value:nth-child(3)').textContent = count;
+            
+            // Update preview products
+            updateProductVisibility();
+        }
+        
+        // Initialize
+        updateProductCount();
+        updateProductVisibility();
+    </script>
+</body>
+</html>
